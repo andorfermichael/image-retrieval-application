@@ -15,6 +15,9 @@ namespace Image_Retrieval_Application
         public frm_main()
         {
             InitializeComponent();
+
+            // Maximize form on application start
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
         }
     }
 }
