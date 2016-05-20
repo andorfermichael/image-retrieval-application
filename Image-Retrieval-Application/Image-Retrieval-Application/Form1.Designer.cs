@@ -1,6 +1,6 @@
 ﻿namespace Image_Retrieval_Application
 {
-    partial class Form1
+    partial class frm_main
     {
         /// <summary>
         /// Required designer variable.
@@ -30,13 +30,14 @@
         {
             this.SuspendLayout();
             // 
-            // Form1
+            // frm_main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1378, 940);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "frm_main";
+            this.Text = "Image Retrieval Application © Michael Andorfer, Nicola Deufemia, Stefanie Habersa" +
+    "tter, Vera Karl";
             this.ResumeLayout(false);
 
         }
