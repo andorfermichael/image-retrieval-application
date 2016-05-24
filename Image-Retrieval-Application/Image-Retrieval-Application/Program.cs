@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+using System.Diagnostics;
 
 namespace Image_Retrieval_Application
 {
     static class Program
     {
+        // TODO: In production replace switch from solutionDirectory to applicationDirectory
+        //string applicationDirectory = Path.GetDirectoryName("../../" + Application.ExecutablePath);
+        static string solutionDirectory = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Directory.GetCurrentDirectory()));
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
