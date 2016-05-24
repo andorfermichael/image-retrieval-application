@@ -14,6 +14,16 @@ namespace Image_Retrieval_Application
         //string applicationDirectory = Path.GetDirectoryName("../../" + Application.ExecutablePath);
         static string solutionDirectory = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Directory.GetCurrentDirectory()));
 
+        public static void startTagSearch(string searchValue) {
+            // TODO: Replace with real function
+            Debug.WriteLine(searchValue);
+        }
+
+
+
+
+
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>

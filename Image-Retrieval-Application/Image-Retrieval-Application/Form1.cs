@@ -23,7 +23,10 @@ namespace Image_Retrieval_Application
             InitializeComponent();
 
             // Maximize form on application start
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            //WindowState = System.Windows.Forms.FormWindowState.Maximized;
+
+            this.MaximizedBounds = Screen.FromHandle(this.Handle).WorkingArea;
+            this.WindowState = FormWindowState.Maximized;
         }
 
         private void frm_main_Load(object sender, EventArgs e)
@@ -49,8 +52,9 @@ namespace Image_Retrieval_Application
 
         protected void onSearchButtonClicked(object sender, EventArgs args)
         {
-            //HtmlElement searchField = webbrowser.Document.GetElementById("search-text");
-            //string searchFieldValue = searchField.GetAttribute("value");
+            HtmlElement searchField = webbrowser.Document.GetElementById("search-text");
+            string searchFieldValue = searchField.GetAttribute("value");
+            Program.startTagSearch(searchFieldValue);
         }
     }
 }
