@@ -19,6 +19,7 @@
             }
         </style>
         <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="css/fileinput.min.css">
         <link rel="stylesheet" href="css/main.css">
 
         <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
@@ -40,10 +41,17 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <form class="navbar-form navbar-center" role="form">
-            <div class="form-group">
-              <input type="text" id="search-text" placeholder="Search" class="form-control">
-            </div>
-            <button type="submit" id="search-button" class="btn btn-success">Start Search</button>
+            <!--<div class="form-group">
+              <input id="search-text" type="text" placeholder="Search" class="form-control">
+			  <input id="browse-image" type="file" class="file-loading" data-filename-placement="inside">
+            </div>-->
+			<div class="input-group">
+				<input id="search-text" type="text" placeholder="Enter tag ..." class="form-control" data-allowed-file-extensions='["jpg", "png"]'>
+				<span class="input-group-btn">
+					<input id="browse-image" type="file" class="file-loading" data-filename-placement="inside">
+				</span>
+			</div>
+            <button type="submit" id="search-default" class="btn btn-success">Start Search</button>
           </form>
         </div><!--/.navbar-collapse -->
       </div>
@@ -86,6 +94,7 @@
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
 
         <script src="js/vendor/bootstrap.min.js"></script>
+		<script src="js/vendor/fileinput.min.js"></script>
 
         <script src="js/plugins.js"></script>
         <script src="js/main.js"></script>
