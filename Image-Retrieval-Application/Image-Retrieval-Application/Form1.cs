@@ -28,8 +28,15 @@ namespace Image_Retrieval_Application
 
         private void frm_main_Load(object sender, EventArgs e)
         {
+            webbrowser.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(IntializeDocument);
+
             // Load index on start
             webbrowser.Url = new Uri("file:///" + solutionDirectory + "\\web\\index.html");
+        }
+
+        private void IntializeDocument(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+            Debug.WriteLine("Document.ready");
         }
     }
 }
