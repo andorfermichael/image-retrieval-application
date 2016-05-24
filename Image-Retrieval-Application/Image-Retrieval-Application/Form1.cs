@@ -28,15 +28,29 @@ namespace Image_Retrieval_Application
 
         private void frm_main_Load(object sender, EventArgs e)
         {
-            webbrowser.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(IntializeDocument);
+            // Add document complete handler on webbrowser component
+            webbrowser.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(onDocumentCompleted);
 
             // Load index on start
             webbrowser.Url = new Uri("file:///" + solutionDirectory + "\\web\\index.html");
         }
 
-        private void IntializeDocument(object sender, WebBrowserDocumentCompletedEventArgs e)
+        private void onDocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-            Debug.WriteLine("Document.ready");
+            addEventHandlers();
+        }
+
+        protected void addEventHandlers()
+        {
+            // Add search button event handler
+            HtmlElement searchButton = webbrowser.Document.GetElementById("search-button");
+            searchButton.AttachEventHandler("onclick", (sender, args) => onSearchButtonClicked(searchButton, EventArgs.Empty));
+        }
+
+        protected void onSearchButtonClicked(object sender, EventArgs args)
+        {
+            //HtmlElement searchField = webbrowser.Document.GetElementById("search-text");
+            //string searchFieldValue = searchField.GetAttribute("value");
         }
     }
 }
