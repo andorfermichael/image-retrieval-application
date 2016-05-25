@@ -9,7 +9,7 @@ namespace Image_Retrieval_Application
     {
         // TODO: In production replace switch from solutionDirectory to applicationDirectory
         //string applicationDirectory = Path.GetDirectoryName("../../" + Application.ExecutablePath);
-        static string solutionDirectory = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Directory.GetCurrentDirectory()));
+        static string solutionDirectory = Path.GetDirectoryName(Path.GetDirectoryName(Directory.GetCurrentDirectory()));
 
         public static void startTagSearch(string searchValue) {
             // TODO: Replace with real function code
