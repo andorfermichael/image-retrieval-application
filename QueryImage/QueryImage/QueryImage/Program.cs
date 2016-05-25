@@ -114,16 +114,15 @@ namespace QueryImage
 
             //  { "date_taken", "description", "tags", "title", "username" }
             foreach (string word in splitIntoWords(Item.date_taken))   
-                addWordToIndex(Item, word);
+                addWordToIndex(Item, word.ToLower());
             foreach (string word in splitIntoWords(Item.description))
-                addWordToIndex(Item, word);
+                addWordToIndex(Item, word.ToLower());
             foreach (string word in splitIntoWords(Item.tags))
-                addWordToIndex(Item, word);
+                addWordToIndex(Item, word.ToLower());
             foreach (string word in splitIntoWords(Item.title))
-                addWordToIndex(Item, word);
+                addWordToIndex(Item, word.ToLower());
             foreach (string word in splitIntoWords(Item.username))
-                addWordToIndex(Item, word);
-
+                addWordToIndex(Item, word.ToLower());
         }
         public static void addWordToIndex(dynamic Item, string Property)
         {
