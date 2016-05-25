@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
@@ -15,8 +12,14 @@ namespace Image_Retrieval_Application
         static string solutionDirectory = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Directory.GetCurrentDirectory()));
 
         public static void startTagSearch(string searchValue) {
-            // TODO: Replace with real function
-            Debug.WriteLine(searchValue);
+            // TODO: Replace with real function code
+            Debug.WriteLine("Search Value: " + searchValue);
+        }
+
+        public static void startQueryByExampleSearch(string imageLocation)
+        {
+            // TODO: Replace with real function code
+            Debug.WriteLine("Example Location: " + imageLocation);
         }
 
 

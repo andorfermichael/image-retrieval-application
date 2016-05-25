@@ -35,18 +35,19 @@
             // 
             this.webbrowser.Dock = System.Windows.Forms.DockStyle.Fill;
             this.webbrowser.Location = new System.Drawing.Point(0, 0);
-            this.webbrowser.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webbrowser.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.webbrowser.MinimumSize = new System.Drawing.Size(13, 13);
             this.webbrowser.Name = "webbrowser";
-            this.webbrowser.Size = new System.Drawing.Size(1378, 940);
+            this.webbrowser.Size = new System.Drawing.Size(919, 602);
             this.webbrowser.TabIndex = 0;
             // 
             // frm_main
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1378, 940);
+            this.ClientSize = new System.Drawing.Size(919, 602);
             this.Controls.Add(this.webbrowser);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "frm_main";
             this.Text = "Image Retrieval Application © Michael Andorfer, Nicola Deufemia, Stefanie Habersa" +
     "tter, Vera Karl";
