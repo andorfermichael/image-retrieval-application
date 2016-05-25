@@ -1,6 +1,6 @@
 $(document).on('ready', function() {
 	$("#input-image-3").fileinput({
-		uploadUrl: "",
+		uploadUrl: "/",
 		allowedFileExtensions: ["jpg", "png"],
 		resizePreference: 'height',
 		maxFileCount: 1,

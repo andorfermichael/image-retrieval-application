@@ -263,7 +263,7 @@
                 actions = data.isDelete ? data.actions(false, showDel, showZoom, showDrag, disabled, url, key) : '',
                 footer = data.footer.replace(/\{actions}/g, actions);
             return footer.replace(/\{caption}/g, caption).replace(/\{size}/g, data.getSize(size))
-                .replace(/\{width}/g, width).replace(/\{indicator}/g, '').replace(/\{indicatorTitle}/g, '');
+                .replace(/\{width}/g, width)//.replace(/\{indicator}/g, '').replace(/\{indicatorTitle}/g, '');
         }
     };
     getNum = function (num, def) {
@@ -351,7 +351,7 @@
         '</div>\n';
     //noinspection HtmlUnknownAttribute
     tBtnDefault = '<button type="{type}" id={id} tabindex="500" title="{title}" class="{css}" {status}>{icon} {label}</button>';
-    tBtnLink = '<a href="{href}" tabindex="500" title="{title}" class="{css}" {status}>{icon} {label}</a>';
+    tBtnLink = '<a id={id} href="{href}" tabindex="500" title="{title}" class="{css}" {status}>{icon} {label}</a>';
     tBtnBrowse = '<div tabindex="500" class="{css}" {status}>{icon} {label}</div>';
     tModalMain = '<div id="' + MODAL_ID + '" class="file-zoom-dialog modal fade" tabindex="-1" aria-labelledby="' +
         MODAL_ID + 'Label"></div>';
@@ -383,7 +383,7 @@
         '        {upload} {delete} {zoom} {other}' +
         '    </div>\n' +
         '    {drag}\n' +
-        '    <div class="file-upload-indicator" title="{indicatorTitle}">{indicator}</div>\n' +
+        //'    <div class="file-upload-indicator" title="{indicatorTitle}">{indicator}</div>\n' +
         '    <div class="clearfix"></div>\n' +
         '</div>';
     tActionDelete = '<button type="button" class="kv-file-remove {removeClass}" ' +
@@ -991,11 +991,12 @@
             self.$dropZone.removeClass('file-highlighted');
         },
         _uploadClick: function (e) {
-            /*var self = this, $btn = self.$container.find('.fileinput-upload'), $form,
+            var self = this, $btn = self.$container.find('.fileinput-upload'), $form,
                 isEnabled = !$btn.hasClass('disabled') && isEmpty($btn.attr('disabled'));
             if (e && e.isDefaultPrevented()) {
                 return;
             }
+			self.isUploadable = false;
             if (!self.isUploadable) {
                 if (isEnabled && $btn.attr('type') !== 'submit') {
                     $form = $btn.closest('form');
@@ -1010,7 +1011,7 @@
             e.preventDefault();
             if (isEnabled) {
                 self.upload();
-            }*/
+            }
         },
         _submitForm: function () {
             var self = this, $el = self.$element, files = $el.get(0).files;
@@ -2607,20 +2608,20 @@
         _renderFileFooter: function (caption, size, width, isError) {
             var self = this, config = self.fileActionSettings, footer, rem = config.showRemove, drg = config.showDrag,
                 upl = config.showUpload, zoom = config.showZoom, out, template = self._getLayoutTemplate('footer'),
-                indicator = isError ? config.indicatorError : config.indicatorNew,
-                title = isError ? config.indicatorErrorTitle : config.indicatorNewTitle;
+                //indicator = isError ? config.indicatorError : config.indicatorNew,
+                //title = isError ? config.indicatorErrorTitle : config.indicatorNewTitle;
             size = self._getSize(size);
             if (self.isUploadable) {
                 out = template.replace(/\{actions}/g, self._renderFileActions(rem, upl, zoom, drg, false, false, false))
                     .replace(/\{caption}/g, caption).replace(/\{size}/g, size).replace(/\{width}/g, width)
-                    .replace(/\{progress}/g, self._renderThumbProgress()).replace(/\{indicator}/g, indicator)
-                    .replace(/\{indicatorTitle}/g, title);
+                    .replace(/\{progress}/g, self._renderThumbProgress())//.replace(/\{indicator}/g, indicator)
+                    //.replace(/\{indicatorTitle}/g, title);
             } else {
                 out = template.replace(/\{actions}/g,
                     self._renderFileActions(false, false, zoom, drg, false, false, false))
                     .replace(/\{caption}/g, caption).replace(/\{size}/g, size).replace(/\{width}/g, width)
-                    .replace(/\{progress}/g, '').replace(/\{indicator}/g, indicator)
-                    .replace(/\{indicatorTitle}/g, title);
+                    .replace(/\{progress}/g, '')//.replace(/\{indicator}/g, indicator)
+                    //.replace(/\{indicatorTitle}/g, title);
             }
             out = replaceTags(out, self.previewThumbTags);
             return out;
@@ -2645,13 +2646,13 @@
                     .replace(/\{dataUrl}/g, vUrl)
                     .replace(/\{dataKey}/g, vKey);
             }
-            if (showUpload) {
+            /*if (showUpload) {
                 btnUpload = self._getLayoutTemplate('actionUpload')
 					.replace(/\{uploadID}/g, config.uploadID)
                     .replace(/\{uploadClass}/g, config.uploadClass)
                     .replace(/\{uploadIcon}/g, config.uploadIcon)
                     .replace(/\{uploadTitle}/g, config.uploadTitle);
-            }
+            }*/
             if (showZoom) {
                 btnZoom = self._getLayoutTemplate('actionZoom')
                     .replace(/\{zoomClass}/g, config.zoomClass)
