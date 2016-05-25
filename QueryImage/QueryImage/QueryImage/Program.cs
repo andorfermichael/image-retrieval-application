@@ -112,25 +112,37 @@ namespace QueryImage
             //    }
             //}
 
+            //  { "date_taken", "description", "tags", "title", "username" }
+            foreach (string word in splitIntoWords(Item.date_taken))   
+                addWordToIndex(Item, word);
             foreach (string word in splitIntoWords(Item.description))
-            {
-                //{ "date_taken", "description", "tags", "title", "username" };
-                if (!(stopWords.Contains(word)) && (word.Length >= 3))
+                addWordToIndex(Item, word);
+            foreach (string word in splitIntoWords(Item.tags))
+                addWordToIndex(Item, word);
+            foreach (string word in splitIntoWords(Item.title))
+                addWordToIndex(Item, word);
+            foreach (string word in splitIntoWords(Item.username))
+                addWordToIndex(Item, word);
+
+        }
+        public static void addWordToIndex(dynamic Item, string Property)
+        {
+             //{ "date_taken", "description", "tags", "title", "username" };
+                if (!(stopWords.Contains(Property)) && (Property.Length >= 3))
                 {   //check if it is a stopWord, if not, add it to searchIndex
-                    if (!(searchIndex.ContainsKey(word)))
+                    if (!(searchIndex.ContainsKey(Property)))
                     {   //check if Key exists already in Dictionary
-                        searchIndex.Add(word, new List<dynamic>() { Item });
+                        searchIndex.Add(Property, new List<dynamic>() { Item });
                         //Console.WriteLine("# Adding Key '{0}' with Item '{1}'#\n", word, Item.id);
                         Console.Write(".");
                     }
                     else 
                     {   //key exists already
                        //Console.WriteLine("## Key '{0}' already exists, adding Item '{1}' to set#\n", word, Item.id);
-                       searchIndex[word].Add(Item);
+                       searchIndex[Property].Add(Item);
                        Console.Write(".");
                     }                         
                 }
-            }
         }
         public static Object GetPropValue(this Object obj, String name)
         {
