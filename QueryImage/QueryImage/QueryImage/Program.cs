@@ -1,0 +1,365 @@
+﻿using Accord.Imaging;
+using Accord.MachineLearning;
+using Accord.Math;
+using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Dynamic;
+using System.IO;
+using System.Linq;
+using System.Xml.Linq;
+using FSDirectory = Lucene.Net.Store.FSDirectory;
+using Version = Lucene.Net.Util.Version;
+using System.Data.Entity.Design.PluralizationServices;
+using System.Globalization;
+//using Accord.Math.Distances;
+
+namespace QueryImage
+{
+	class MainClass
+	{
+		internal static readonly DirectoryInfo INDEX_DIR = new DirectoryInfo ("index");
+
+        //GLOBAL VARIABLES:
+        public static string imgDirectory = @"D:\0MMT\Digital Media Systems\Übung 3 Projekt\MMEval div400 sets\devset\img\";
+        public static string xmlDirectory = @"D:\0MMT\Digital Media Systems\Übung 3 Projekt\MMEval div400 sets\devset\xml\";
+        public static List<String> stopWords = new List<String> { "able", "about", "above", "abroad", "according", "accordingly", "across", "actually", "adj", "after", "again", "afterwards", "against", "ago", "ahead", "ain't", "all", "allow", "allows", "almost", "alone", "along", "alongside", "already", "also", "although", "always", "am", "amid", "amidst", "among", "amongst", "an", "and", "another", "any", "anybody", "anyhow", "anyone", "anything", "anyway", "anyways", "anywhere", "apart", "appear", "appreciate", "appropriate", "are", "aren't", "around", "as", "a's", "aside", "ask", "asking", "associated", "at", "available", "away", "awfully", "back", "backward", "backwards", "be", "became", "because", "become", "becomes", "becoming", "been", "before", "beforehand", "begin", "behind", "being", "believe", "below", "beside", "besides", "best", "better", "between", "beyond", "both", "brief", "but", "by", "came", "can", "cannot", "cant", "can't", "caption", "cause", "causes", "certain", "certainly", "changes", "clearly", "c'mon", "co", "co.", "com", "come", "comes", "concerning", "consequently", "consider", "considering", "contain", "containing", "contains", "corresponding", "could", "couldn't", "course", "c's", "currently", "dare", "daren't", "definitely", "described", "despite", "did", "didn't", "different", "directly", "do", "does", "doesn't", "doing", "done", "don't", "down", "downwards", "during", "each", "edu", "eg", "eight", "eighty", "either", "else", "elsewhere", "end", "ending", "enough", "entirely", "especially", "et", "etc", "even", "ever", "evermore", "every", "everybody", "everyone", "everything", "everywhere", "ex", "exactly", "example", "except", "fairly", "far", "farther", "few", "fewer", "fifth", "first", "five", "followed", "following", "follows", "for", "forever", "former", "formerly", "forth", "forward", "found", "four", "from", "further", "furthermore", "get", "gets", "getting", "given", "gives", "go", "goes", "going", "gone", "got", "gotten", "greetings", "had", "hadn't", "half", "happens", "hardly", "has", "hasn't", "have", "haven't", "having", "he", "he'd", "he'll", "hello", "help", "hence", "her", "here", "hereafter", "hereby", "herein", "here's", "hereupon", "hers", "herself", "he's", "hi", "him", "himself", "his", "hither", "hopefully", "how", "howbeit", "however", "hundred", "i'd", "ie", "if", "ignored", "i'll", "i'm", "immediate", "in", "inasmuch", "inc", "inc.", "indeed", "indicate", "indicated", "indicates", "inner", "inside", "insofar", "instead", "into", "inward", "is", "isn't", "it", "it'd", "it'll", "its", "it's", "itself", "i've", "just", "k", "keep", "keeps", "kept", "know", "known", "knows", "last", "lately", "later", "latter", "latterly", "least", "less", "lest", "let", "let's", "like", "liked", "likely", "likewise", "little", "look", "looking", "looks", "low", "lower", "ltd", "made", "mainly", "make", "makes", "many", "may", "maybe", "mayn't", "me", "mean", "meantime", "meanwhile", "merely", "might", "mightn't", "mine", "minus", "miss", "more", "moreover", "most", "mostly", "mr", "mrs", "much", "must", "mustn't", "my", "myself", "name", "namely", "nd", "near", "nearly", "necessary", "need", "needn't", "needs", "neither", "never", "neverf", "neverless", "nevertheless", "new", "next", "nine", "ninety", "no", "nobody", "non", "none", "nonetheless", "noone", "no-one", "nor", "normally", "not", "nothing", "notwithstanding", "novel", "now", "nowhere", "obviously", "of", "off", "often", "oh", "ok", "okay", "old", "on", "once", "one", "ones", "one's", "only", "onto", "opposite", "or", "other", "others", "otherwise", "ought", "oughtn't", "our", "ours", "ourselves", "out", "outside", "over", "overall", "own", "particular", "particularly", "past", "per", "perhaps", "placed", "please", "plus", "possible", "presumably", "probably", "provided", "provides", "que", "quite", "qv", "rather", "rd", "re", "really", "reasonably", "recent", "recently", "regarding", "regardless", "regards", "relatively", "respectively", "right", "round", "said", "same", "saw", "say", "saying", "says", "second", "secondly", "see", "seeing", "seem", "seemed", "seeming", "seems", "seen", "self", "selves", "sensible", "sent", "serious", "seriously", "seven", "several", "shall", "shan't", "she", "she'd", "she'll", "she's", "should", "shouldn't", "since", "six", "so", "some", "somebody", "someday", "somehow", "someone", "something", "sometime", "sometimes", "somewhat", "somewhere", "soon", "sorry", "specified", "specify", "specifying", "still", "sub", "such", "sup", "sure", "take", "taken", "taking", "tell", "tends", "th", "than", "thank", "thanks", "thanx", "that", "that'll", "thats", "that's", "that've", "the", "their", "theirs", "them", "themselves", "then", "thence", "there", "thereafter", "thereby", "there'd", "therefore", "therein", "there'll", "there're", "theres", "there's", "thereupon", "there've", "these", "they", "they'd", "they'll", "they're", "they've", "thing", "things", "think", "third", "thirty", "this", "thorough", "thoroughly", "those", "though", "three", "through", "throughout", "thru", "thus", "till", "to", "together", "too", "took", "toward", "towards", "tried", "tries", "truly", "try", "trying", "t's", "twice", "two", "un", "under", "underneath", "undoing", "unfortunately", "unless", "unlike", "unlikely", "until", "unto", "up", "upon", "upwards", "us", "use", "used", "useful", "uses", "using", "usually", "v", "value", "various", "versus", "very", "via", "viz", "vs", "want", "wants", "was", "wasn't", "way", "we", "we'd", "welcome", "well", "we'll", "went", "were", "we're", "weren't", "we've", "what", "whatever", "what'll", "what's", "what've", "when", "whence", "whenever", "where", "whereafter", "whereas", "whereby", "wherein", "where's", "whereupon", "wherever", "whether", "which", "whichever", "while", "whilst", "whither", "who", "who'd", "whoever", "whole", "who'll", "whom", "whomever", "who's", "whose", "why", "will", "willing", "wish", "with", "within", "without", "wonder", "won't", "would", "wouldn't", "yes", "yet", "you", "you'd", "you'll", "your", "you're", "yours", "yourself", "yourselves", "you've", "zero" };
+        public static Dictionary<string, dynamic> searchIndex = new Dictionary<string, dynamic>();
+		public static void Main (string[] args)
+		{
+			//Index ();
+			//Query ();
+            //parseXML("ajanta_caves.xml");
+            List<String> imgSubDirectories = getSubDirectories(imgDirectory);
+            List<String> xmlFiles = genXmlFilepaths(imgSubDirectories);
+            Console.WriteLine(xmlFiles[0]);
+            
+            dynamic photos = _getExpandoFromXml(xmlFiles[0]);
+            Console.WriteLine(photos);
+
+            foreach (var photo in photos.photo)
+            {
+                Console.WriteLine("{0} = {1}", photo.Key, photo.Value);
+            }
+            //addItemToIndex(Photos.photo[0]);
+                
+            //Console.ReadLine();
+			//ImageFeatures ();
+
+            foreach (var item in searchIndex)
+            {
+                if (item.Key.Count() == 1)
+                {
+                    Console.WriteLine("Word {0} is part of Photo: {1}.jpg \n", item.Key, item.Value.id);
+                }
+                else
+                {
+                    Console.WriteLine("Word {0} is part of following Photos: \n");
+                    foreach (dynamic subitem in item.Key)
+                    {
+                        Console.WriteLine("\t{0}\n", subitem.id);
+                    }
+                }
+            }
+            Console.ReadLine();
+		}
+
+        private static void addItemToIndex(dynamic Item)
+        {
+            Console.WriteLine("Adding Item {0} to Index", Item.id);
+
+            Console.WriteLine("Dynamic MemberNames: " + Item.GetDynamicMemberNames().Length);
+            Console.WriteLine("GetProperties: " + Item.GetType().GetProperties().Length);
+            Console.WriteLine("Attributes: " + Item.Attributes().Length);
+          
+
+            foreach (var prop in Item.GetType().GetProperties())
+            {
+               
+                Console.WriteLine(prop.GetValue(Item, null));
+                if (!(stopWords.Find(prop.GetValue())))
+                {
+                    //check if it is a stopWord, if not, add it to searchIndex
+                    searchIndex.Add(prop.GetValue(),Item);
+                }
+            }
+        }
+
+        private static List<String> getSubDirectories(string directorypath)
+        {
+            Console.WriteLine("reading Directory: " + directorypath);
+            var directories = CustomSearcher.GetDirectories(directorypath);
+            return directories;
+        }
+
+        private static List<String> genXmlFilepaths(List<String> imgSubDirectories)
+        {
+            List<String> xmlFilepaths = new List<string>();
+            foreach (string item in imgSubDirectories)
+            {
+                // WARNING, this is only valid if Folders are named "img" and "xml" (Length of 3 characters)
+                //string tmp = item.Substring(item.IndexOf("img/"));
+                xmlFilepaths.Add(item.Replace(@"\img\", @"\xml\") + ".xml");
+            }
+            return xmlFilepaths;
+        }
+
+        private static dynamic parseXML(string filepath)
+        {
+            //            string xml = @"<Students>
+            //                <Student ID=""100"">
+            //                    <Name>Arul</Name>
+            //                    <Mark>90</Mark>
+            //                </Student>
+            //                <Student>
+            //                    <Name>Arul2</Name>
+            //                    <Mark>80</Mark>
+            //                </Student>
+            //            </Students>";
+
+            Console.WriteLine("parsing XML: " + filepath);
+
+            string xml = File.ReadAllText(filepath);
+            dynamic elements = DynamicXml.Parse(xml);
+            return elements;
+        }
+
+		private static void Index ()
+		{
+			try {
+				using (var writer = new IndexWriter (FSDirectory.Open (INDEX_DIR), new StandardAnalyzer (Version.LUCENE_30), true, IndexWriter.MaxFieldLength.LIMITED)) {
+					Document doc1 = new Document ();
+					doc1.Add (new Field ("name", "doc 1", Field.Store.YES, Field.Index.NO));
+					doc1.Add (new Field ("content", "abc xyz", Field.Store.YES, Field.Index.ANALYZED));
+					writer.AddDocument (doc1);
+
+					Document doc2 = new Document ();
+					doc2.Add (new Field ("name", "doc 2", Field.Store.YES, Field.Index.NO));
+					doc2.Add (new Field ("content", "abc defg defg defg", Field.Store.YES, Field.Index.ANALYZED));
+					writer.AddDocument (doc2);
+
+					Document doc3 = new Document ();
+					doc3.Add (new Field ("name", "doc 3", Field.Store.YES, Field.Index.NO));
+					doc3.Add (new Field ("content", "qwerty defg defg", Field.Store.YES, Field.Index.ANALYZED));
+					writer.AddDocument (doc3);
+
+					Console.Out.WriteLine ("Optimizing...");
+					writer.Optimize ();
+					writer.Commit ();
+					writer.Dispose ();
+
+				}
+			} catch (IOException e) {
+				Console.Out.WriteLine (" caught a " + e.GetType () + "\n with message: " + e.Message);
+			}
+		}
+
+
+		private static void Query ()
+		{
+			try {
+				IndexReader reader = IndexReader.Open (FSDirectory.Open (INDEX_DIR), true);
+				Console.Out.WriteLine ("Number of indexed docs: " + reader.NumDocs ());
+
+				IndexSearcher searcher = new IndexSearcher (FSDirectory.Open (INDEX_DIR));
+				Term searchTerm = new Term ("content", "defg");
+				TermQuery query = new TermQuery (searchTerm);
+
+				TopScoreDocCollector topDocColl = TopScoreDocCollector.Create (10, true);
+				searcher.Search (query, topDocColl);
+				TopDocs topDocs = topDocColl.TopDocs ();
+				Console.Out.WriteLine ("Number of hits: " + topDocs.TotalHits);
+				ScoreDoc[] docarray = topDocs.ScoreDocs;
+
+				for (int i = 0; i < docarray.Length; i++) {
+					Console.Out.WriteLine ((i + 1) + ". " + (searcher.Doc (docarray [i].Doc)).GetField ("name").StringValue);
+				}
+
+			} catch (IOException e) {
+				Console.Out.WriteLine (" caught a " + e.GetType () + "\n with message: " + e.Message);
+			}
+
+		}
+
+
+		private static void ImageFeatures ()
+		{
+			Dictionary<string, Bitmap> testImages = new Dictionary<string, Bitmap>();
+            
+			testImages.Add("img_acropolis", (Bitmap)Bitmap.FromFile("test_imgs/acropolis_athens.jpg"));
+			testImages.Add("img_cathedral", (Bitmap)Bitmap.FromFile("test_imgs/amiens_cathedral.jpg"));
+			testImages.Add("img_bigben", (Bitmap)Bitmap.FromFile("test_imgs/big_ben.jpg"));
+
+			int numberOfWords = 6; // number of cluster centers: typically >>100
+
+			// Create a Binary-Split clustering algorithm
+			BinarySplit binarySplit = new BinarySplit(numberOfWords);
+
+			IBagOfWords<Bitmap> bow;
+			// Create bag-of-words (BoW) with the given algorithm
+			BagOfVisualWords surfBow = new BagOfVisualWords(binarySplit);
+
+			// Compute the BoW codebook using training images only
+			Bitmap[] bmps = new Bitmap[testImages.Count];
+			testImages.Values.CopyTo(bmps, 0);
+			surfBow.Compute(bmps);
+			bow = surfBow; 	// this model needs to be saved once it is calculated: only compute it once to calculate features 
+							// from the collection as well as for new queries.
+							// THE SAME TRAINED MODEL MUST BE USED TO GET THE SAME FEATURES!!!
+
+			Dictionary<string, double[]> testImageFeatures = new Dictionary<string, double[]>();
+
+			// Extract features for all images
+			foreach (string imagename in testImages.Keys)
+			{
+				double[] featureVector = bow.GetFeatureVector(testImages[imagename]);
+				testImageFeatures.Add (imagename, featureVector);
+				Console.Out.WriteLine (imagename + " features: " + featureVector.ToString(DefaultArrayFormatProvider.InvariantCulture));
+			}
+			// Calculate Image Similarities
+			string[] imagenames = new string[testImageFeatures.Keys.Count];
+			testImageFeatures.Keys.CopyTo(imagenames, 0);
+			for (int i = 0; i < imagenames.Length; i++) {
+				for (int j = i + 1; j < imagenames.Length; j++) {
+					double dist = Distance.Cosine (testImageFeatures[imagenames[i]], testImageFeatures[imagenames[j]]);
+					Console.Out.WriteLine (imagenames[i] + " <-> " + imagenames[j] + " distance: " + dist.ToString());
+				}
+			}
+		}
+        private static dynamic _getExpandoFromXml(String file, XElement node = null)
+        {
+            if (String.IsNullOrWhiteSpace(file) && node == null) return null;
+
+            // If a file is not empty then load the xml and overwrite node with the
+            // root element of the loaded document
+            node = !String.IsNullOrWhiteSpace(file) ? XDocument.Load(file).Root : node;
+
+            IDictionary<String, dynamic> result = new ExpandoObject();
+
+            // implement fix as suggested by [ndinges]
+            var pluralizationService = PluralizationService.CreateService(CultureInfo.CreateSpecificCulture("en-us"));
+
+            // use parallel as we dont really care of the order of our properties
+            node.Elements().AsParallel().ForAll(gn =>
+            {
+                // Determine if node is a collection container
+                var isCollection = gn.HasElements &&
+                    (
+                    // if multiple child elements and all the node names are the same
+                        gn.Elements().Count() > 1 &&
+                        gn.Elements().All(
+                            e => e.Name.LocalName.ToLower() == gn.Elements().First().Name.LocalName) ||
+
+                        // if there's only one child element then determine using the PluralizationService if
+                    // the pluralization of the child elements name matches the parent node. 
+                        gn.Name.LocalName.ToLower() == pluralizationService.Pluralize(
+                            gn.Elements().First().Name.LocalName).ToLower()
+                    );
+
+                // If the current node is a container node then we want to skip adding
+                // the container node itself, but instead we load the children elements
+                // of the current node. If the current node has child elements then load
+                // those child elements recursively
+                var items = isCollection ? gn.Elements().ToList() : new List<XElement>() { gn };
+
+                var values = new List<dynamic>();
+
+                // use parallel as we dont really care of the order of our properties
+                // and it will help processing larger XMLs
+                items.AsParallel().ForAll(i => values.Add((i.HasElements) ?
+                   _getExpandoFromXml(null, i) : i.Value.Trim()));
+
+                // Add the object name + value or value collection to the dictionary
+                result[gn.Name.LocalName] = isCollection ? values : values.FirstOrDefault();
+            });
+            return result;
+        }
+	}
+    public class DynamicXml : DynamicObject
+    {
+        XElement _root;
+        public DynamicXml(XElement root)
+        {
+            _root = root;
+        }
+
+        public static DynamicXml Parse(string xmlString)
+        {
+            dynamic DynamicXml = new ExpandoObject();
+            return new DynamicXml(XDocument.Parse(xmlString).Root);
+        }
+
+        public static DynamicXml Load(string filename)
+        {
+            return new DynamicXml(XDocument.Load(filename).Root);
+        }
+
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        {
+            result = null;
+
+            var att = _root.Attribute(binder.Name);
+            if (att != null)
+            {
+                result = att.Value;
+                return true;
+            }
+
+            var nodes = _root.Elements(binder.Name);
+            if (nodes.Count() > 1)
+            {
+                result = nodes.Select(n => new DynamicXml(n)).ToList();
+                return true;
+            }
+
+            var node = _root.Element(binder.Name);
+            if (node != null)
+            {
+                if (node.HasElements)
+                {
+                    //result = new DynamicXml(node);
+                    result = new List<DynamicXml>() { new DynamicXml(node) };
+                }
+                else
+                {
+                    result = node.Value;
+                }
+                return true;
+            }
+
+            return true;
+        }
+
+    }
+    public class CustomSearcher
+    {
+        public static List<string> GetDirectories(string path, string searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly)
+        {
+            if (searchOption == SearchOption.TopDirectoryOnly)
+                return Directory.GetDirectories(path, searchPattern).ToList();
+
+            var directories = new List<string>(GetDirectories(path, searchPattern));
+
+            for (var i = 0; i < directories.Count; i++)
+                directories.AddRange(GetDirectories(directories[i], searchPattern));
+
+            return directories;
+        }
+
+        private static List<string> GetDirectories(string path, string searchPattern)
+        {
+            try
+            {
+                return Directory.GetDirectories(path, searchPattern).ToList();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return new List<string>();
+            }
+        }
+    }
+}
