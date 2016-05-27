@@ -113,21 +113,6 @@ namespace QueryImage
 
         private static void addItemToIndex(dynamic Item)
         {
-            //Console.WriteLine("Adding Item with id:'{0}' to Index", Item.id);
-
-            // Unfortunately iterating over Properties doesn't work with a dynamic object!
-            // Instead we are using hardcoded properties List - see globals "propertiesToIndex"
-
-            //foreach (var prop in Item.GetType().GetProperties())
-            //{              
-            //    Console.WriteLine(prop.GetValue(Item, null));
-            //    if (!(stopWords.Find(prop.GetValue())))
-            //    {
-            //        //check if it is a stopWord, if not, add it to searchIndex
-            //        searchIndex.Add(prop.GetValue(),Item);
-            //    }
-            //}
-
             //  { "date_taken", "description", "tags", "title", "username" }
             foreach (string word in splitIntoWords(Item.date_taken))   
                 addWordToIndex(Item, word.ToLower(), weightOfPorperties["date_taken"]);
@@ -140,6 +125,7 @@ namespace QueryImage
             foreach (string word in splitIntoWords(Item.username))
                 addWordToIndex(Item, word.ToLower(), weightOfPorperties["username"]);
         }
+
         public static void addWordToIndex(dynamic Item, string Property, int Weight)
         {
              //{ "date_taken", "description", "tags", "title", "username" };
@@ -330,7 +316,7 @@ namespace QueryImage
                 }
             }
 
-            foreach (KeyValuePair<dynamic,int> item in results)
+            foreach (KeyValuePair<dynamic,int> item in sortResultsByScore(results))
                 matchingImages.Add(fileIndex[item]);
 
             return matchingImages;

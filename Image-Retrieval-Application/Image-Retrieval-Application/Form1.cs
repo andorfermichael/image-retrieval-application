@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Image_Retrieval_Application
 {
@@ -53,7 +54,7 @@ namespace Image_Retrieval_Application
             // Get search value from input field and start tag search
             HtmlElement searchField = webbrowser.Document.GetElementById("search-field");
             string searchFieldValue = searchField.GetAttribute("value");
-            Program.startTagSearch(searchFieldValue);
+            List<string> paths = Program.startTagSearch(searchFieldValue);
 
             // Get result container
             HtmlElement resultsContainer = webbrowser.Document.GetElementById("results-container");
