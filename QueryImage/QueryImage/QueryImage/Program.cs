@@ -38,8 +38,10 @@ namespace QueryImage
             {"title",10 },
             {"username",4 }
         };
-         public static Dictionary<string, Dictionary<dynamic, int>> searchIndex = new Dictionary<string, Dictionary<dynamic, int>>();
-		//                          /GLOBAL VARIABLESad
+        public static Dictionary<string, Dictionary<dynamic, int>> searchIndex = new Dictionary<string, Dictionary<dynamic, int>>();
+        public static Dictionary<dynamic, string> fileIndex = new Dictionary<dynamic, string>();
+         //                          /GLOBAL VARIABLES
+
         
         public static void Main (string[] args)
 		{
@@ -69,15 +71,16 @@ namespace QueryImage
 
             }
             Console.WriteLine("### Parsing XML-File(s) ###\n");
-            dynamic elements = parseXML(xmlFiles[0]);
-            //Console.WriteLine(photos);
 
             Console.WriteLine("### Creating Index (this can take a while) ####");
-            foreach (var photo in elements.photo)
+            foreach (string file in xmlFiles)
             {
-                addItemToIndex(photo);
+                dynamic elements = parseXML(file);
+                foreach (var photo in elements.photo)
+                {
+                    addItemToIndex(photo);
+                }
             }
-
             Console.WriteLine("\n\n### Index creation successful! ###\n\n");
             Console.WriteLine("Press Enter to print Index [humanized]:");
             Console.ReadLine();
