@@ -86,7 +86,7 @@ namespace QueryImage
             Console.ReadLine();
             //ImageFeatures ();
 
-            printIndex();
+            //printIndex();
 
             Console.WriteLine("\nPress Enter to Start Search Simulator");
             Console.ReadLine();
@@ -209,7 +209,7 @@ namespace QueryImage
         }
 
         private static List<String> genXmlFilepaths(List<String> imgSubDirectories)
-        {
+        {   
             List<String> xmlFilepaths = new List<string>();
             foreach (string item in imgSubDirectories)
             {
@@ -222,23 +222,24 @@ namespace QueryImage
 
         private static dynamic parseXML(string filepath)
         {
-            //            string xml = @"<Students>
-            //                <Student ID=""100"">
-            //                    <Name>Arul</Name>
-            //                    <Mark>90</Mark>
-            //                </Student>
-            //                <Student>
-            //                    <Name>Arul2</Name>
-            //                    <Mark>80</Mark>
-            //                </Student>
-            //            </Students>";
-
             Console.WriteLine("parsing XML: " + filepath);
-
             string xml = File.ReadAllText(filepath);
+
             dynamic elements = DynamicXml.Parse(xml);
+            createFileIndex(filepath, elements);
             return elements;
         }
+
+        private static void createFileIndex(string directory, dynamic elements)
+        {
+            directory = directory.Replace(@"\xml\", @"\img\").Substring(0,directory.Length - 4)  + @"\";
+            foreach (dynamic item in elements.photo)
+            {
+                fileIndex.Add(item, directory + item.id + ".jpg");
+                //Console.WriteLine(directory + item.id + ".jpg");
+            }
+        }
+
         private static void SearchSimulator() {
             string searchString = "";
  
@@ -255,7 +256,7 @@ namespace QueryImage
             {
                 Console.WriteLine("Search for: ");
                 searchString = Console.ReadLine().ToLower();
-                printResults(sortResultsByScore(searchWithQuery(searchString)), searchString);
+                printResults(sortResultsByScore(consoleSearch(searchString)), searchString);
             }        
         }
         private static List<KeyValuePair<dynamic,int>> sortResultsByScore(Dictionary<dynamic,int> results)
@@ -272,13 +273,13 @@ namespace QueryImage
 
             return sortedResults;
         }
-        private static Dictionary<dynamic,int> searchWithQuery(string searchString)
+        private static Dictionary<dynamic,int> consoleSearch(string searchString)
         {
             Dictionary<dynamic, int> results = new Dictionary<dynamic, int>();
             Dictionary<dynamic, int> resultsSingleQuery;
 
             foreach (string word in splitIntoWords(searchString))
-            {
+            {   
                 resultsSingleQuery = new Dictionary<dynamic, int>();
                 foreach (KeyValuePair<dynamic, int> entry in searchIndex[word])
                 {
@@ -300,6 +301,41 @@ namespace QueryImage
 
             return results;
         }
+
+        private static List<string> searchFor(string searchString)
+        {
+            Dictionary<dynamic, int> results = new Dictionary<dynamic, int>();
+            Dictionary<dynamic, int> resultsSingleQuery;
+            List<string> matchingImages = new List<string>();
+
+            foreach (string word in splitIntoWords(searchString))
+            {
+                resultsSingleQuery = new Dictionary<dynamic, int>();
+    
+                foreach (KeyValuePair<dynamic, int> entry in searchIndex[word])
+                {
+                    resultsSingleQuery.Add(entry.Key, entry.Value);
+                }
+                if (results.Count == 0)
+                {
+                    foreach (KeyValuePair<dynamic, int> entry in resultsSingleQuery)
+                    {
+                        results.Add(entry.Key, entry.Value);
+                    }
+                }
+                else
+                {
+                    results = results.Where(x => resultsSingleQuery.ContainsKey(x.Key))
+                             .ToDictionary(x => x.Key, x => x.Value);
+                }
+            }
+
+            foreach (KeyValuePair<dynamic,int> item in results)
+                matchingImages.Add(fileIndex[item]);
+
+            return matchingImages;
+        }
+
         private static void printResults(List<KeyValuePair<dynamic,int>> results, string searchString)
         {
             Console.WriteLine("\n");
