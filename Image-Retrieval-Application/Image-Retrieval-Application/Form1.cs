@@ -54,6 +54,20 @@ namespace Image_Retrieval_Application
             HtmlElement searchField = webbrowser.Document.GetElementById("search-field");
             string searchFieldValue = searchField.GetAttribute("value");
             Program.startTagSearch(searchFieldValue);
+
+            // Get result container
+            HtmlElement resultsContainer = webbrowser.Document.GetElementById("results-container");
+
+            // Insert results into results container
+            foreach (string path in paths)
+            {
+                HtmlElement div = webbrowser.Document.CreateElement("div");
+                HtmlElement img = webbrowser.Document.CreateElement("img");
+
+                img.SetAttribute("src", path);
+                div.AppendChild(img);
+                resultsContainer.AppendChild(div);
+            }
         }
 
         protected void onUploadButtonClicked(object sender, EventArgs args)
