@@ -98,9 +98,11 @@ namespace QueryImage
                     }
                 }
             }
-           
+
+            Console.WriteLine("\nPress Enter to Start Search Simulator");
             Console.ReadLine();
-		}
+            SearchSimulator();
+        }
 
         private static void addItemToIndex(dynamic Item)
         {
@@ -230,8 +232,79 @@ namespace QueryImage
             dynamic elements = DynamicXml.Parse(xml);
             return elements;
         }
+        private static void SearchSimulator() {
+            string searchString = "";
+ 
+            Console.Clear();
+            Console.BackgroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Clear();
+            Console.WriteLine(" ".PadRight(Console.WindowWidth - 1));
+            Console.WriteLine("[\t\tSearch Simulator\t\t]");
+            Console.WriteLine(" ".PadRight(Console.WindowWidth - 1));
+            Console.WriteLine(" ".PadRight(Console.WindowWidth - 1));
+            Console.WriteLine(" ".PadRight(Console.WindowWidth - 1));
+            while (true)
+            {
+                Console.WriteLine("Search for: ");
+                searchString = Console.ReadLine().ToLower();
+                printResults(sortResultsByScore(searchWithQuery(searchString)), searchString);
+            }        
+        }
+        private static List<KeyValuePair<dynamic,int>> sortResultsByScore(Dictionary<dynamic,int> results)
+        {
+            List<KeyValuePair<dynamic, int>> sortedResults = results.ToList();
 
-		private static void Index ()
+            sortedResults.Sort(
+                delegate (KeyValuePair<dynamic, int> pair1,
+                KeyValuePair<dynamic, int> pair2)
+                {
+                    return pair2.Value.CompareTo(pair1.Value);
+                }
+            );
+
+            return sortedResults;
+        }
+        private static Dictionary<dynamic,int> searchWithQuery(string searchString)
+        {
+            Dictionary<dynamic, int> results = new Dictionary<dynamic, int>();
+            Dictionary<dynamic, int> resultsSingleQuery;
+
+            foreach (string word in splitIntoWords(searchString))
+            {
+                resultsSingleQuery = new Dictionary<dynamic, int>();
+                foreach (KeyValuePair<dynamic, int> entry in searchIndex[word])
+                {
+                    resultsSingleQuery.Add(entry.Key, entry.Value);
+                }
+                if (results.Count == 0)
+                {
+                    foreach (KeyValuePair<dynamic, int> entry in resultsSingleQuery)
+                    {
+                        results.Add(entry.Key, entry.Value);
+                    }
+                }
+                else
+                {
+                    results = results.Where(x => resultsSingleQuery.ContainsKey(x.Key))
+                             .ToDictionary(x => x.Key, x => x.Value);
+                }
+            }
+
+            return results;
+        }
+        private static void printResults(List<KeyValuePair<dynamic,int>> results, string searchString)
+        {
+            Console.WriteLine("\n");
+            Console.WriteLine("-------------------/ Results for Searchparameter: {0} /------------------\n",searchString);
+            Console.WriteLine(" ".PadRight(Console.WindowWidth - 1));
+            foreach (KeyValuePair<dynamic, int> entry in results)
+            {
+                Console.WriteLine(".) {0}\twith Score: {1}", entry.Key.id + ".jpg", entry.Value);
+            }
+            Console.WriteLine(" ".PadRight(Console.WindowWidth - 1));
+        }
+        private static void Index ()
 		{
 			try {
 				using (var writer = new IndexWriter (FSDirectory.Open (INDEX_DIR), new StandardAnalyzer (Version.LUCENE_30), true, IndexWriter.MaxFieldLength.LIMITED)) {
