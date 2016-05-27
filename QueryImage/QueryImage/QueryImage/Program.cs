@@ -86,6 +86,14 @@ namespace QueryImage
             Console.ReadLine();
             //ImageFeatures ();
 
+            printIndex();
+
+            Console.WriteLine("\nPress Enter to Start Search Simulator");
+            Console.ReadLine();
+            SearchSimulator();
+        }
+        private static void printIndex()
+        {
             foreach (KeyValuePair<string, Dictionary<dynamic, int>> entry in searchIndex)
             {
                 if (entry.Value.Count() == 1)
@@ -101,10 +109,6 @@ namespace QueryImage
                     }
                 }
             }
-
-            Console.WriteLine("\nPress Enter to Start Search Simulator");
-            Console.ReadLine();
-            SearchSimulator();
         }
 
         private static void addItemToIndex(dynamic Item)
