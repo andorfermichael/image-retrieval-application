@@ -98,7 +98,6 @@ namespace Image_Retrieval_Application
             }
 
             resultsContainer.AppendChild(divContainer);
-            Console.WriteLine("-> Generating Pagination for Results");
             generatePaginationHTML(paths, currentPage, resultsPerPage);
         }
 
@@ -188,8 +187,6 @@ namespace Image_Retrieval_Application
                 HtmlElement nextResults = webbrowser.Document.GetElementById("next-results");
                 nextResults.AttachEventHandler("onclick", (sender, args) => onNextPageButtonClicked(nextResults, EventArgs.Empty));
             }
-
-            Console.WriteLine(resultsControll.InnerHtml.ToString());
         }
 
         protected void onNextPageButtonClicked(object sender, EventArgs args)
@@ -267,7 +264,6 @@ namespace Image_Retrieval_Application
             {
                 resultsForPage.Add(imgpaths[i]);
             }
-            Console.WriteLine("Showing results {0} to {1} of {2} on page {3}", (0 + (page - 1) * resultsPerPage), (page * resultsPerPage), imgpaths.Count, page);
             return resultsForPage;
         }
     }
