@@ -153,7 +153,7 @@ namespace Image_Retrieval_Application
         public static List<string> startTagSearch(string searchValue) {
             // TODO: Replace with real function code
             Debug.WriteLine("Search Value: " + searchValue.ToLower());
-            return searchFor(searchValue.ToLower());
+            return getImgPaths(searchFor(searchValue.ToLower()));
         }
 
         public static void startQueryByExampleSearch(string imageLocation)
@@ -254,37 +254,52 @@ namespace Image_Retrieval_Application
             }
         }
 
-        private static List<string> searchFor(string searchString)
+        private static List<KeyValuePair<dynamic,int>> searchFor(string searchString)
         {
             Dictionary<dynamic, int> results = new Dictionary<dynamic, int>();
             Dictionary<dynamic, int> resultsSingleQuery;
-            List<string> matchingImages = new List<string>();
 
             foreach (string word in splitIntoWords(searchString))
             {
                 resultsSingleQuery = new Dictionary<dynamic, int>();
-
-                foreach (KeyValuePair<dynamic, int> entry in searchIndex[word])
+                try
                 {
-                    resultsSingleQuery.Add(entry.Key, entry.Value);
-                }
-                if (results.Count == 0)
-                {
-                    foreach (KeyValuePair<dynamic, int> entry in resultsSingleQuery)
+                    foreach (KeyValuePair<dynamic, int> entry in searchIndex[word])
                     {
-                        results.Add(entry.Key, entry.Value);
+                        resultsSingleQuery.Add(entry.Key, entry.Value);
+                    }
+                    if (results.Count == 0)
+                    {
+                        foreach (KeyValuePair<dynamic, int> entry in resultsSingleQuery)
+                        {
+                            results.Add(entry.Key, entry.Value);
+                        }
+                    }
+                    else
+                    {
+                        results = results.Where(x => resultsSingleQuery.ContainsKey(x.Key))
+                                 .ToDictionary(x => x.Key, x => x.Value);
                     }
                 }
-                else
+                catch (KeyNotFoundException e)
                 {
-                    results = results.Where(x => resultsSingleQuery.ContainsKey(x.Key))
-                             .ToDictionary(x => x.Key, x => x.Value);
+                    Console.WriteLine("# Search for keyword '{0}' threw 0 results!",word);
                 }
+                catch (Exception e)
+                {
+                    Console.WriteLine("# Error! Following Error ocurred: " + e.Message);
+                }
+               
             }
 
-            foreach (KeyValuePair<dynamic, int> item in sortResultsByScore(results))
-                matchingImages.Add(fileIndex[item.Key.id]);
+            return sortResultsByScore(results);
+        }
 
+        private static List<string> getImgPaths(List<KeyValuePair<dynamic,int>> results)
+        {
+            List<string> matchingImages = new List<string>();
+            foreach (KeyValuePair<dynamic, int> item in results)
+                matchingImages.Add(fileIndex[item.Key.id]);
             return matchingImages;
         }
 
@@ -303,7 +318,21 @@ namespace Image_Retrieval_Application
             return sortedResults;
         }
 
-
+        private static List<KeyValuePair<dynamic,int>> paginate(List<KeyValuePair<dynamic, int>> results, int page, int resultsPerPage)
+        {
+            if (page == 0)
+                page = 1;
+            else if (page < 0)
+                throw new ArgumentException();
+             
+            List<KeyValuePair<dynamic, int>> resultsForPage = new List<KeyValuePair<dynamic, int>>();
+            for (int i = 0 + (page - 1) * resultsPerPage; i < (page * resultsPerPage) && i < results.Count; i++)
+            {
+                resultsForPage.Add(results[i]);
+            }
+            Console.WriteLine("Showing results {0} to {1} of {2} on page {3}", (0 + (page - 1) * resultsPerPage), (page * resultsPerPage),results.Count, page);
+            return resultsForPage;
+        }
 
 
 
