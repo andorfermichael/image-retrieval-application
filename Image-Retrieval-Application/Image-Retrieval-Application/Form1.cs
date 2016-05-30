@@ -66,7 +66,14 @@ namespace Image_Retrieval_Application
             // Get result container
             HtmlElement resultsContainer = webbrowser.Document.GetElementById("results-container");
             if (paths.Count > 0)
-                 resultsContainer.InnerHtml = "<h2>" + searchWord + "<small class='text-muted'>  Showing results " + ((resultsPerPage * (currentPage - 1)) + 1) + " to " + resultsPerPage * currentPage + " from " + paths.Count + ":";
+            {
+                int showingTo = 0;
+                if (resultsPerPage * currentPage > paths.Count)
+                    showingTo = paths.Count;
+                else
+                    showingTo = resultsPerPage * currentPage;
+                resultsContainer.InnerHtml = "<h2>" + searchWord + "<small class='text-muted'>  Showing results " + ((resultsPerPage * (currentPage - 1)) + 1) + " to " + showingTo + " from " + paths.Count + ":";
+            }
             else
                 resultsContainer.InnerHtml = "<h2>No results found for '" + searchWord + "'!</h2>";
             // Insert results into results container
