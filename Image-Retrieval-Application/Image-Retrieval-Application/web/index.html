@@ -19,7 +19,7 @@
             }
         </style>
         <link rel="stylesheet" href="css/bootstrap-theme.min.css">
-		<link rel="stylesheet" href="css/fileinput.min.css">
+		<!--<link rel="stylesheet" href="css/fileinput.min.css">-->
         <link rel="stylesheet" href="css/main.css">
 
         <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
@@ -50,13 +50,17 @@
       </div>
     </nav>
 
-    <!-- Main jumbotron for a primary marketing message or call to action -->
-    <div class="jumbotron">
-      <div class="container">
-		<label class="control-label">Select File</label>
-		<input id="input-image-3" type="file" name="input-image" class="file-loading" accept="image/*">
-      </div>
-    </div>
+	<div class="jumbotron">
+		<div class="form-group selection">
+			<label for="sel1">Select Similarity Function:</label>
+			<select class="form-control" id="sel1">
+				<option value="cm">CM (Color Moments)</option>
+				<option value="csd">CSD (Color Structure Descriptor)</option>
+				<option value="hog">HOG (Histogram Of Oriented	gradients</option>
+				<option value="lbp">LBP (Linear Binary Pattern)</option>
+			</select>
+		</div>
+	</div>
 
     <div class="container">
         <div id="results-container">
@@ -74,10 +78,10 @@
     <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
 
     <script src="js/vendor/bootstrap.min.js"></script>
-    <script src="js/vendor/fileinput.js"></script>
-    <script src="js/vendor/canvas-to-blob.min.js"></script>
+    <!--<script src="js/vendor/fileinput.js"></script>-->
+    <!--<script src="js/vendor/canvas-to-blob.min.js"></script>-->
 
     <script src="js/plugins.js"></script>
-    <script src="js/main.js"></script>
+    <!--<script src="js/main.js"></script>-->
 </body>
 </html>
