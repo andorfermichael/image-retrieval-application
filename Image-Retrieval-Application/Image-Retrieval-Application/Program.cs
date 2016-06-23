@@ -41,17 +41,8 @@ namespace Image_Retrieval_Application
         public static List<string> GetDirectories(string path, string searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             if (searchOption == SearchOption.TopDirectoryOnly)
-            {
-                try
-                {
-                    return Directory.GetDirectories(path, searchPattern).ToList();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Fatal! Unable to GetDirectories from path {0}! Error: {1}", path, e.Message);
-                    return new List<string>();
-                }
-
+            { 
+               return Directory.GetDirectories(path, searchPattern).ToList();
             }
 
 
@@ -312,7 +303,7 @@ namespace Image_Retrieval_Application
             return elements;
         }
 
-        private static void createFileIndex(string directory, dynamic elements)
+        private static void addToFileIndex(string directory, dynamic elements)
         {
             directory = directory.Replace(@"\xml\", @"\img\").Substring(0, directory.Length - 4) + @"\";
             foreach (dynamic item in elements.photo)
@@ -321,7 +312,6 @@ namespace Image_Retrieval_Application
                 //Console.WriteLine(directory + item.id + ".jpg");
                 string picPath = (string) directory + item.id + ".jpg";
                 //Console.WriteLine(picPath);
-                
             }
         }
 
@@ -476,7 +466,7 @@ namespace Image_Retrieval_Application
             return resultDistances.OrderBy(key => key.Value).Take(10).ToDictionary(key => key.Key, key => key.Value);
         }
 
-        public static void initiateComputation()
+        public static void readDevsetAndCompute()
         {
             Console.WriteLine("### Grabbing IMG and XML-Files ###\n");
 
@@ -488,14 +478,14 @@ namespace Image_Retrieval_Application
             {
                 try
                 {
-                    imgSubDirectories = getSubDirectories(projectPath + @"\img");
+                    imgSubDirectories = getSubDirectories(projectPath + @"\devset\img");
                     xmlFiles = genXmlFilepaths(imgSubDirectories);
                     csvFiles = genCSVFilepaths(imgSubDirectories);
                     computedTargetPath = projectPath + @"\computed\";
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine("Project Directory does not contain an neccessary directory/seems to be empty or cannot be found/accessed: '{0}'\n{1}\n\nEnter new absolute Path to Project-Directory:\n(Project Directory must contain following Directories: 'xml' - XML-Metadatas,'img' - Images and 'descvis' - Featurepoints)\t", projectPath);
+                    Console.WriteLine("Project Directory does not contain an neccessary 'devset' directory/seems to be empty or cannot be found/accessed: '{0}'\n\nEnter new absolute Path to Project-Directory:\n(Project Directory must contain at least 'devset' with following Directories: 'xml' - XML-Metadatas,'img' - Images and 'descvis' - Featurepoints)\t", projectPath);
                     string newProjectPath = Console.ReadLine();
                     //xmlDirectory = newXmlPath;    //not neccessary
                     Console.WriteLine("- Project-Path set to '{0}'", newProjectPath);
@@ -506,7 +496,7 @@ namespace Image_Retrieval_Application
                         newProjectPath = newProjectPath + @"\";
                     }
                     computedTargetPath = projectPath + @"\computed\";
-                    imgSubDirectories = getSubDirectories(newProjectPath + @"img");
+                    imgSubDirectories = getSubDirectories(newProjectPath + @"devset\img");
                     xmlFiles = genXmlFilepaths(imgSubDirectories);
                     csvFiles = genCSVFilepaths(imgSubDirectories);
                 }
@@ -523,10 +513,9 @@ namespace Image_Retrieval_Application
                 {
                     addItemToIndex(photo);
                 }
-                createFileIndex(file, elements);
+                addToFileIndex(file, elements);
             }
 
-            Console.WriteLine(fileIndex);
             generateFileIndexXML().Save(computedTargetPath + @"\fileIndex.xml");
             Console.WriteLine("\n\n### Index creation successful! ###\n\n");
 
@@ -535,6 +524,72 @@ namespace Image_Retrieval_Application
 
             Console.WriteLine("\n\n### Extracting Featurepoints ###\n\n");
             picFeatures = saveFeaturesFromCSV(csvFiles);
+            generateFeaturePointsXML(picFeatures).Save(computedTargetPath + @"\features.xml");
+            Console.WriteLine("\n\n### Saved Featurepoints to {0} ###\n\n", computedTargetPath + @"\features.xml");
+        }
+
+        public static void readTestsetAndCompute()
+        {
+            Console.WriteLine("### Processing Testset ###\n");
+            List<String> imgSubDirectories = new List<string>();
+            List<String> xmlFiles = new List<string>();
+            List<String> csvFiles = new List<string>();
+
+            while (xmlFiles.Count == 0 || csvFiles.Count == 0)
+            {
+                try
+                {
+                    imgSubDirectories = getSubDirectories(projectPath + @"\testset\img");
+                    xmlFiles = genXmlFilepaths(imgSubDirectories);
+                    csvFiles = genCSVFilepaths(imgSubDirectories);
+                    computedTargetPath = projectPath + @"\computed\";
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("### Testset not found at '{0}'! Please enter absolute path to testset! ####", projectPath);
+                    string testsetPath = Console.ReadLine();
+                    //xmlDirectory = newXmlPath;    //not neccessary
+                    Console.WriteLine("- Testset-Path set to '{0}'", testsetPath);
+                    Console.WriteLine("\nTrying to fetch Data from " + testsetPath);
+                    if (!testsetPath.EndsWith(@"\"))
+                    {
+                        testsetPath = testsetPath + @"\";
+                    }
+                    computedTargetPath = projectPath + @"\computed\";
+                    imgSubDirectories = getSubDirectories(testsetPath + @"img");
+                    xmlFiles = genXmlFilepaths(imgSubDirectories);
+                    csvFiles = genCSVFilepaths(imgSubDirectories);
+                }
+            }
+
+            Console.WriteLine("### Parsing XML-File(s) ###\n");
+            System.IO.Directory.CreateDirectory(computedTargetPath);
+
+            Console.WriteLine("### Creating Index ####");
+            foreach (string file in xmlFiles)
+            {
+                dynamic elements = parseXML(file);
+                foreach (var photo in elements.photo)
+                {
+                    addItemToIndex(photo);
+                }
+                addToFileIndex(file, elements);
+            }
+
+            generateFileIndexXML().Save(computedTargetPath + @"\fileIndex.xml");
+            Console.WriteLine("\n\n### Index extended successfully! ###\n\n");
+
+            generateSearchIndexXML(searchIndex).Save(computedTargetPath + @"\searchIndex.xml");
+            Console.WriteLine("\n\n### Index extented at {0} ###\n\n", computedTargetPath + @"\searchIndex.xml");
+
+            Console.WriteLine("\n\n### Extracting Featurepoints ###\n\n");
+            Dictionary<string, decimal[]> additionalPicFeatures = saveFeaturesFromCSV(csvFiles);
+
+            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures)
+            {
+                picFeatures.Add(item.Key, item.Value);
+            }
+
             generateFeaturePointsXML(picFeatures).Save(computedTargetPath + @"\features.xml");
             Console.WriteLine("\n\n### Saved Featurepoints to {0} ###\n\n", computedTargetPath + @"\features.xml");
         }
@@ -607,7 +662,13 @@ namespace Image_Retrieval_Application
                 Console.WriteLine("### First Start of Application - Initiating Creation of Index and FeaturepointsCollection ####");
                 Console.WriteLine("\n\n\tPress Enter to Start (this can take a while!)");
                 Console.ReadLine();
-                initiateComputation();
+                readDevsetAndCompute();
+                Console.WriteLine("\n\n### Would you like to add 'testset' to the project? (Needs potentially more time for index creation, featurepoints collecting, etc.)\n\t");
+                string option = Console.ReadLine();
+                if (option == "yes")
+                {
+                    readTestsetAndCompute();
+                }
             }
             else if (System.IO.File.Exists(computedTargetPath + @"\features.xml") && System.IO.File.Exists(computedTargetPath + @"\searchIndex.xml"))
             {
@@ -623,7 +684,13 @@ namespace Image_Retrieval_Application
                 }
                 if (option == "yes")
                 {
-                    initiateComputation();
+                    Console.WriteLine("\n\n### Would you like to add 'testset' to the project? (Needs potentially more time for index creation, featurepoints collecting, etc.)  [yes/no]\n\t");
+                    string option2 = Console.ReadLine();
+                    readDevsetAndCompute();
+                    if (option2 == "yes")
+                    {
+                        readTestsetAndCompute();
+                    }
                 }
                 else
                 {
