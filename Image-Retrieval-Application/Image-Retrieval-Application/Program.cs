@@ -679,20 +679,13 @@ namespace Image_Retrieval_Application
 
         public static void loadAllPrecomputedFeatures()
         {
-            Dictionary<string, Dictionary<string, decimal[]>> additionalPicFeatures = new Dictionary<string, Dictionary<string, decimal[]>>();
-            additionalPicFeatures["CM"] = loadPrecomputedFeatures("CM");
-            additionalPicFeatures["CSD"] = loadPrecomputedFeatures("CSD");
-            additionalPicFeatures["HOG"] = loadPrecomputedFeatures("HOG");
-            additionalPicFeatures["LBP"] = loadPrecomputedFeatures("LBP");
+            Dictionary<string, Dictionary<string, decimal[]>> loadedPicFeatures = new Dictionary<string, Dictionary<string, decimal[]>>();
+            loadedPicFeatures["CM"] = loadPrecomputedFeatures("CM");
+            loadedPicFeatures["CSD"] = loadPrecomputedFeatures("CSD");
+            loadedPicFeatures["HOG"] = loadPrecomputedFeatures("HOG");
+            loadedPicFeatures["LBP"] = loadPrecomputedFeatures("LBP");
 
-            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["CM"])
-                picFeatures["CM"].Add(item.Key, item.Value);
-            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["CSD"])
-                picFeatures["CSD"].Add(item.Key, item.Value);
-            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["LBP"])
-                picFeatures["LBP"].Add(item.Key, item.Value);
-            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["HOG"])
-                picFeatures["HOG"].Add(item.Key, item.Value);
+            picFeatures = loadedPicFeatures;
         }
 
         public static Dictionary<string, decimal[]> loadPrecomputedFeatures(string type)
@@ -729,7 +722,7 @@ namespace Image_Retrieval_Application
                 projectPath = newProjectPath;
             }
             computedTargetPath = projectPath + @"\computed\";
-
+            Console.WriteLine(computedTargetPath);
             if (!System.IO.Directory.Exists(computedTargetPath))
             {
                 Console.WriteLine("### First Start of Application - Initiating Creation of Index and FeaturepointsCollection ####");
@@ -743,7 +736,7 @@ namespace Image_Retrieval_Application
                     readTestsetAndCompute();
                 }
             }
-            else if (System.IO.File.Exists(computedTargetPath + @"\features.xml") && System.IO.File.Exists(computedTargetPath + @"\searchIndex.xml"))
+            else if (System.IO.File.Exists(computedTargetPath + @"\featuresCM.xml") && System.IO.File.Exists(computedTargetPath + @"\featuresCSD.xml") && System.IO.File.Exists(computedTargetPath + @"\featuresHOG.xml") && System.IO.File.Exists(computedTargetPath + @"\featuresLBP.xml") && System.IO.File.Exists(computedTargetPath + @"\searchIndex.xml") && System.IO.File.Exists(computedTargetPath + @"\fileIndex.xml"))
             {
                 Console.WriteLine(computedTargetPath);
                 //computedPath Directory exists with computed files 
@@ -773,7 +766,19 @@ namespace Image_Retrieval_Application
                     loadAllPrecomputedFeatures();
                 }
 
-
+            }
+            else
+            {
+                Console.WriteLine("### Computed Directory exists, but doesnot contain neccessary files! - Initiating Creation of Index and FeaturepointsCollection ####");
+                Console.WriteLine("\n\n\tPress Enter to Start (this can take a while!)");
+                Console.ReadLine();
+                readDevsetAndCompute();
+                Console.WriteLine("\n\n### Would you like to add 'testset' to the project? (Needs potentially more time for index creation, featurepoints collecting, etc.)\n\t");
+                string option = Console.ReadLine();
+                if (option == "yes")
+                {
+                    readTestsetAndCompute();
+                }
             }
 
             //Dictionary<string, double> resultDistances = computeDistance("REAL ID HERE", picFeatures);
