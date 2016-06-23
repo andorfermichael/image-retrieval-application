@@ -45,10 +45,6 @@ namespace Image_Retrieval_Application
             // Add searchbutton event handler
             HtmlElement searchButton = webbrowser.Document.GetElementById("search-button");
             searchButton.AttachEventHandler("onclick", (sender, args) => onSearchButtonClicked(searchButton, EventArgs.Empty));
-
-            // Add uploadbutton event handler
-            HtmlElement uploadButton = webbrowser.Document.GetElementById("upload-button");
-            uploadButton.AttachEventHandler("onclick", (sender, args) => onUploadButtonClicked(uploadButton, EventArgs.Empty));
         }
 
         protected void onSearchButtonClicked(object sender, EventArgs args)
@@ -59,6 +55,62 @@ namespace Image_Retrieval_Application
             List<string> paths = Program.startTagSearch(searchFieldValue);
             cachedResults = paths;
             drawResults(paths, searchFieldValue, 1, resultsPerPage);
+        }
+
+        protected void onImageClicked(object sender, EventArgs args)
+        {
+            // Receive clicked element via mouse coordinates
+            Point ScreenCoord = new Point(MousePosition.X, MousePosition.Y);
+            Point BrowserCoord = webbrowser.PointToClient(ScreenCoord);
+            HtmlElement elem = webbrowser.Document.GetElementFromPoint(BrowserCoord);
+
+            // Clear modal body
+            HtmlElement modalBody = webbrowser.Document.GetElementById("modal-body");
+            modalBody.InnerHtml = "";
+
+            long imageID = Convert.ToInt64(Path.GetFileName(elem.GetAttribute("src")).Replace(".jpg", ""));
+            string selectedOption = "";
+
+            HtmlElement selectBox = webbrowser.Document.GetElementById("sel1");
+
+            foreach (HtmlElement item in selectBox.Children)
+            {
+                if (item.GetAttribute("value") == webbrowser.Document.GetElementById("sel1").GetAttribute("value"))
+                {
+                    selectedOption = webbrowser.Document.GetElementById("sel1").GetAttribute("value").ToUpper();
+                }
+            }
+
+            List<string> imagePaths = Program.retrieveSimilarImages(imageID, selectedOption);
+
+            // Insert similar images into modal
+            insertSimilarImagesIntoModal(imagePaths);
+
+            // Open modal window
+            HtmlDocument doc = webbrowser.Document;
+            HtmlElement head = doc.GetElementsByTagName("head")[0];
+            HtmlElement s = doc.CreateElement("script");
+            s.SetAttribute("text", "function openModel() { $('#my-modal').modal('show')}");
+            head.AppendChild(s);
+            webbrowser.Document.InvokeScript("openModel");
+        }
+
+        protected void insertSimilarImagesIntoModal(List<string> paths)
+        {
+            // Get modal body
+            HtmlElement modalBody = webbrowser.Document.GetElementById("modal-body");
+
+            // Insert images
+            foreach (string path in paths)
+            {
+                HtmlElement div = webbrowser.Document.CreateElement("div");
+                HtmlElement img = webbrowser.Document.CreateElement("img");
+                HtmlElement a = webbrowser.Document.CreateElement("a");
+
+                img.SetAttribute("src", path);
+                img.SetAttribute("alt", "Placeholder for Resultimage");
+                modalBody.AppendChild(img);
+            }
         }
 
         protected void drawResults(List<string> paths, string searchWord, int currentPage, int resultsPerPage)
@@ -88,9 +140,10 @@ namespace Image_Retrieval_Application
 
                 div.SetAttribute("className", "col-sm-6 col-md-3");
                 a.SetAttribute("className", "thumbnail");
-                a.SetAttribute("href", path);
                 img.SetAttribute("src", path);
                 img.SetAttribute("alt", "Placeholder for Resultimage");
+                img.SetAttribute("data-target", "#my-modal");
+                a.AttachEventHandler("onclick", (sender, args) => onImageClicked(a, EventArgs.Empty));
                 a.AppendChild(img);
                 div.AppendChild(a);
 
@@ -224,38 +277,6 @@ namespace Image_Retrieval_Application
             // Get page-x value
                 drawResults(cachedResults, searchFieldValue, Int32.Parse(sender.GetAttribute("Innerhtml")), resultsPerPage);
         }
-        protected void onUploadButtonClicked(object sender, EventArgs args)
-        {
-            // Get image source base64 string
-            HtmlElement fileImagePreview = webbrowser.Document.GetElementById("file-preview-image");
-            string base64String = fileImagePreview.GetAttribute("src");
-
-            // Get image source base64 string
-            HtmlElement fileFooterCaption = webbrowser.Document.GetElementById("file-footer-caption");
-            string fileName = fileFooterCaption.GetAttribute("title");
-
-            // Remove meta information
-            int index = base64String.IndexOf("data:image/jpeg;base64,");
-            string cleanPath = (index < 0) ? base64String : base64String.Remove(index, "data:image/jpeg;base64,".Length);
-
-            // Store image on file system
-            SaveByteArrayAsImage(uploadDirectory + fileName, cleanPath);
-
-            Program.startQueryByExampleSearch(uploadDirectory + fileName);
-        }
-
-        // Stores base64 string as image on file system
-        private void SaveByteArrayAsImage(string fullOutputPath, string base64String)
-        {
-            byte[] bytes = Convert.FromBase64String(base64String);
-
-            Image image;
-            using (MemoryStream ms = new MemoryStream(bytes))
-            {
-                image = Image.FromStream(ms);
-                image.Save(fullOutputPath, System.Drawing.Imaging.ImageFormat.Jpeg);
-            }
-        }
 
         private static List<string> paginate(List<string> imgpaths, int page, int resultsPerPage)
         {
@@ -265,6 +286,11 @@ namespace Image_Retrieval_Application
                 resultsForPage.Add(imgpaths[i]);
             }
             return resultsForPage;
+        }
+
+        private void webbrowser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+
         }
     }
 }
