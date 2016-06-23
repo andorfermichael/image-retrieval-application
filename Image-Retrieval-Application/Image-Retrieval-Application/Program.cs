@@ -652,13 +652,51 @@ namespace Image_Retrieval_Application
             additionalPicFeatures.Add("HOG", saveFeaturesFromCSV(csvFilesHOG));
 
             foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["CM"])
-                picFeatures["CM"].Add(item.Key, item.Value);
+            {
+                try
+                {
+                    picFeatures["CM"].Add(item.Key, item.Value);
+                }
+                catch (ArgumentException)
+                {
+                    Console.WriteLine("Picture already processed");
+                }
+            }
+
             foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["CSD"])
-                picFeatures["CSD"].Add(item.Key, item.Value);
-            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["LBP"])
-                picFeatures["LBP"].Add(item.Key, item.Value);
-            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["HOG"])
-                picFeatures["HOG"].Add(item.Key, item.Value);
+            {
+                try
+                {
+                    picFeatures["CSD"].Add(item.Key, item.Value);
+                }
+                catch (ArgumentException)
+                {
+                    Console.WriteLine("Picture already processed");
+                }
+            }
+                
+                foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["LBP"])
+                {
+                    try
+                    {
+                        picFeatures["LBP"].Add(item.Key, item.Value);
+                    }
+                    catch (ArgumentException)
+                    {
+                        Console.WriteLine("Picture already processed");
+                    }
+                }
+                foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["HOG"])
+                {
+                    try
+                    {
+                        picFeatures["HOG"].Add(item.Key, item.Value);
+                    }
+                    catch (ArgumentException)
+                    {
+                        Console.WriteLine("Picture already processed");
+                    }
+                }
 
             generateFeaturePointsXML(picFeatures["CM"]).Save(computedTargetPath + @"\featuresCM.xml");
             generateFeaturePointsXML(picFeatures["CSD"]).Save(computedTargetPath + @"\featuresCSD.xml");
@@ -721,29 +759,6 @@ namespace Image_Retrieval_Application
                 precomputedFeatures.Add(image.id, decimalCollection.ToArray());
             }
             return precomputedFeatures;
-        }
-
-        public static void chooseCSVperMethod(string selectionMethod) {
-          
-            switch (selectionMethod)
-            {
-                case "CM":
-                    Console.WriteLine("Case 1");
-                    break;
-                case "CSD":
-                    Console.WriteLine("Case 2");
-                    break;
-                case "HOG":
-                    Console.WriteLine("Case 2");
-                    break;
-                case "LBP":
-                    Console.WriteLine("Case 2");
-                    break;
-                default:
-                    //Console.WriteLine("Default case");
-                    break;
-            }
-        
         }
 
         /// <summary>
