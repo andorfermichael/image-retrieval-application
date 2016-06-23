@@ -171,6 +171,14 @@ namespace Image_Retrieval_Application
             return getImgPaths(searchFor(searchValue.ToLower()));
         }
 
+        public static List<string> startSimilaritySearch(string searchValue)
+        {
+            // TODO: Replace with real function code
+            Debug.WriteLine("Search Value: " + searchValue.ToLower());
+            return getImgPaths(searchFor(searchValue.ToLower()));
+        }
+
+
         public static void startQueryByExampleSearch(string imageLocation)
         {
             // TODO: Replace with real function code
@@ -399,21 +407,23 @@ namespace Image_Retrieval_Application
         }
 
 
-        //TODO Distance
-        //public static void function computeDistance() {
-    
-                //// Calculate Image Similarities
-            //string[] imagenames = new string[testImageFeatures.Keys.Count];
-            //testImageFeatures.Keys.CopyTo(imagenames, 0);
-            //for (int i = 0; i < imagenames.Length; i++)
-            //{
-            //    for (int j = i + 1; j < imagenames.Length; j++)
-            //    {
-            //        double dist = Distance.Cosine(testImageFeatures[imagenames[i]], testImageFeatures[imagenames[j]]);
-            //        Console.Out.WriteLine(imagenames[i] + " <-> " + imagenames[j] + " distance: " + dist.ToString());
-            //    }
-            //}
-        //}
+        public static Dictionary<string, double> computeDistance(Dictionary<string, decimal[]> resultFeatures)  {                 
+            //Extract features for SearchedImage
+            decimal[] searchedImageFeatures = resultFeatures["135114980"];
+            Dictionary<string, double> resultDistances = new Dictionary<string, double>();     
+
+			// Calculate Image Similarities
+            foreach (var item in resultFeatures)
+            {
+                double dist = Distance.Cosine(Array.ConvertAll(searchedImageFeatures, x => (double)x), Array.ConvertAll(item.Value, x => (double)x));
+                //Console.WriteLine(dist.ToString());
+                //Console.WriteLine(item.Key);
+                resultDistances.Add(item.Key, dist);
+            }
+
+            return resultDistances.OrderBy(key => key.Value).ToDictionary(key => key.Key, key => key.Value);
+ 
+        }
 
 
         /// <summary>
@@ -454,19 +464,17 @@ namespace Image_Retrieval_Application
             Console.WriteLine("### Parsing XML-File(s) ###\n");
 
             Console.WriteLine("### Creating Index (this can take a while) ####");
-            foreach (string file in xmlFiles)
-            {
-                dynamic elements = parseXML(file);
-                foreach (var photo in elements.photo)
-                {
-                    addItemToIndex(photo);
-                }
-            }
+            //foreach (string file in xmlFiles)
+            //{
+            //    dynamic elements = parseXML(file);
+            //    foreach (var photo in elements.photo)
+            //    {
+            //        addItemToIndex(photo);
+            //    }
+            //}
 
-            saveFeaturesFromCSV(csvFiles);
-
+            computeDistance(saveFeaturesFromCSV(csvFiles));
             
-
             Console.WriteLine("\n\n### Index creation successful! ###\n\n");
             Console.WriteLine("Press Enter to continue:");
             Console.ReadLine();
