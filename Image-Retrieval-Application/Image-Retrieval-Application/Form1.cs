@@ -77,7 +77,7 @@ namespace Image_Retrieval_Application
                 }
             }
 
-            //List<string> imagePaths = Program.retrieveSimilarImages(imageID, selectedOption);
+            List<string> imagePaths = Program.retrieveSimilarImages(imageID, selectedOption);
 
             // Insert similar images into modal
             insertSimilarImagesIntoModal(imagePaths);

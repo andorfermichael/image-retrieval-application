@@ -186,10 +186,11 @@ namespace Image_Retrieval_Application
         }
 
 
-        public static void retrieveSimilarImages(long imageID, string selectionMethod)
+        public static List<string> retrieveSimilarImages(long imageID, string selectionMethod)
         {
             // TODO: Replace with real function
             Debug.WriteLine("Similar Images for ID " + imageID + " with retrieval function " + selectionMethod);
+            return getImgPathsForImageSearch(computeDistance(Convert.ToString(imageID), selectionMethod));
         }
 
         private static List<String> getSubDirectories(string directorypath)
@@ -465,14 +466,17 @@ namespace Image_Retrieval_Application
             return root;
         }
 
-        public static Dictionary<string, double> computeDistance(string imgID, Dictionary<string, decimal[]> FeatureCollection)  {                 
-                       
+        public static Dictionary<string, double> computeDistance(string imgID, string selectionMethod)
+        {                 
             //Extract features for SearchedImage
-            decimal[] searchedImageFeatures = FeatureCollection["135114980"]; //should be imgID
+            Dictionary<string, decimal[]> ImageFeatureCollection = picFeatures[selectionMethod];
+
+
+            decimal[] searchedImageFeatures = ImageFeatureCollection[imgID]; //should be imgID
             Dictionary<string, double> resultDistances = new Dictionary<string, double>();     
 
 			// Calculate Image Similarities
-            foreach (var item in FeatureCollection)
+            foreach (var item in picFeatures[selectionMethod])
             {
                 double dist = Distance.Cosine(Array.ConvertAll(searchedImageFeatures, x => (double)x), Array.ConvertAll(item.Value, x => (double)x));
                 //Console.WriteLine(dist.ToString());
@@ -615,6 +619,29 @@ namespace Image_Retrieval_Application
                 precomputedFeatures.Add(image.id, decimalCollection.ToArray());
             }
             //picFeatures = precomputedFeatures;
+        }
+
+        public static void chooseCSVperMethod(string selectionMethod) {
+          
+            switch (selectionMethod)
+            {
+                case "CM":
+                    Console.WriteLine("Case 1");
+                    break;
+                case "CSD":
+                    Console.WriteLine("Case 2");
+                    break;
+                case "HOG":
+                    Console.WriteLine("Case 2");
+                    break;
+                case "LBP":
+                    Console.WriteLine("Case 2");
+                    break;
+                default:
+                    //Console.WriteLine("Default case");
+                    break;
+            }
+        
         }
 
         /// <summary>
