@@ -136,7 +136,7 @@ namespace Image_Retrieval_Application
 
         //GLOBAL VARIABLES:
         public static string computedTargetPath;
-        public static string projectPath = @"D:\0MMT\Digital Media Systems\Übung 3 Projekt\MMEval div400 sets\devset";
+        public static string projectPath = @"D:\0MMT\Digital Media Systems\Übung 3 Projekt\MMEval div400 sets";
         public static List<String> stopWords = new List<String> { "able", "about", "above", "abroad", "according", "accordingly", "across", "actually", "adj", "after", "again", "afterwards", "against", "ago", "ahead", "ain't", "all", "allow", "allows", "almost", "alone", "along", "alongside", "already", "also", "although", "always", "am", "amid", "amidst", "among", "amongst", "an", "and", "another", "any", "anybody", "anyhow", "anyone", "anything", "anyway", "anyways", "anywhere", "apart", "appear", "appreciate", "appropriate", "are", "aren't", "around", "as", "a's", "aside", "ask", "asking", "associated", "at", "available", "away", "awfully", "back", "backward", "backwards", "be", "became", "because", "become", "becomes", "becoming", "been", "before", "beforehand", "begin", "behind", "being", "believe", "below", "beside", "besides", "best", "better", "between", "beyond", "both", "brief", "but", "by", "came", "can", "cannot", "cant", "can't", "caption", "cause", "causes", "certain", "certainly", "changes", "clearly", "c'mon", "co", "co.", "com", "come", "comes", "concerning", "consequently", "consider", "considering", "contain", "containing", "contains", "corresponding", "could", "couldn't", "course", "c's", "currently", "dare", "daren't", "definitely", "described", "despite", "did", "didn't", "different", "directly", "do", "does", "doesn't", "doing", "done", "don't", "down", "downwards", "during", "each", "edu", "eg", "eight", "eighty", "either", "else", "elsewhere", "end", "ending", "enough", "entirely", "especially", "et", "etc", "even", "ever", "evermore", "every", "everybody", "everyone", "everything", "everywhere", "ex", "exactly", "example", "except", "fairly", "far", "farther", "few", "fewer", "fifth", "first", "five", "followed", "following", "follows", "for", "forever", "former", "formerly", "forth", "forward", "found", "four", "from", "further", "furthermore", "get", "gets", "getting", "given", "gives", "go", "goes", "going", "gone", "got", "gotten", "greetings", "had", "hadn't", "half", "happens", "hardly", "has", "hasn't", "have", "haven't", "having", "he", "he'd", "he'll", "hello", "help", "hence", "her", "here", "hereafter", "hereby", "herein", "here's", "hereupon", "hers", "herself", "he's", "hi", "him", "himself", "his", "hither", "hopefully", "how", "howbeit", "however", "hundred", "i'd", "ie", "if", "ignored", "i'll", "i'm", "immediate", "in", "inasmuch", "inc", "inc.", "indeed", "indicate", "indicated", "indicates", "inner", "inside", "insofar", "instead", "into", "inward", "is", "isn't", "it", "it'd", "it'll", "its", "it's", "itself", "i've", "just", "k", "keep", "keeps", "kept", "know", "known", "knows", "last", "lately", "later", "latter", "latterly", "least", "less", "lest", "let", "let's", "like", "liked", "likely", "likewise", "little", "look", "looking", "looks", "low", "lower", "ltd", "made", "mainly", "make", "makes", "many", "may", "maybe", "mayn't", "me", "mean", "meantime", "meanwhile", "merely", "might", "mightn't", "mine", "minus", "miss", "more", "moreover", "most", "mostly", "mr", "mrs", "much", "must", "mustn't", "my", "myself", "name", "namely", "nd", "near", "nearly", "necessary", "need", "needn't", "needs", "neither", "never", "neverf", "neverless", "nevertheless", "new", "next", "nine", "ninety", "no", "nobody", "non", "none", "nonetheless", "noone", "no-one", "nor", "normally", "not", "nothing", "notwithstanding", "novel", "now", "nowhere", "obviously", "of", "off", "often", "oh", "ok", "okay", "old", "on", "once", "one", "ones", "one's", "only", "onto", "opposite", "or", "other", "others", "otherwise", "ought", "oughtn't", "our", "ours", "ourselves", "out", "outside", "over", "overall", "own", "particular", "particularly", "past", "per", "perhaps", "placed", "please", "plus", "possible", "presumably", "probably", "provided", "provides", "que", "quite", "qv", "rather", "rd", "re", "really", "reasonably", "recent", "recently", "regarding", "regardless", "regards", "relatively", "respectively", "right", "round", "said", "same", "saw", "say", "saying", "says", "second", "secondly", "see", "seeing", "seem", "seemed", "seeming", "seems", "seen", "self", "selves", "sensible", "sent", "serious", "seriously", "seven", "several", "shall", "shan't", "she", "she'd", "she'll", "she's", "should", "shouldn't", "since", "six", "so", "some", "somebody", "someday", "somehow", "someone", "something", "sometime", "sometimes", "somewhat", "somewhere", "soon", "sorry", "specified", "specify", "specifying", "still", "sub", "such", "sup", "sure", "take", "taken", "taking", "tell", "tends", "th", "than", "thank", "thanks", "thanx", "that", "that'll", "thats", "that's", "that've", "the", "their", "theirs", "them", "themselves", "then", "thence", "there", "thereafter", "thereby", "there'd", "therefore", "therein", "there'll", "there're", "theres", "there's", "thereupon", "there've", "these", "they", "they'd", "they'll", "they're", "they've", "thing", "things", "think", "third", "thirty", "this", "thorough", "thoroughly", "those", "though", "three", "through", "throughout", "thru", "thus", "till", "to", "together", "too", "took", "toward", "towards", "tried", "tries", "truly", "try", "trying", "t's", "twice", "two", "un", "under", "underneath", "undoing", "unfortunately", "unless", "unlike", "unlikely", "until", "unto", "up", "upon", "upwards", "us", "use", "used", "useful", "uses", "using", "usually", "v", "value", "various", "versus", "very", "via", "viz", "vs", "want", "wants", "was", "wasn't", "way", "we", "we'd", "welcome", "well", "we'll", "went", "were", "we're", "weren't", "we've", "what", "whatever", "what'll", "what's", "what've", "when", "whence", "whenever", "where", "whereafter", "whereas", "whereby", "wherein", "where's", "whereupon", "wherever", "whether", "which", "whichever", "while", "whilst", "whither", "who", "who'd", "whoever", "whole", "who'll", "whom", "whomever", "who's", "whose", "why", "will", "willing", "wish", "with", "within", "without", "wonder", "won't", "would", "wouldn't", "yes", "yet", "you", "you'd", "you'll", "your", "you're", "yours", "yourself", "yourselves", "you've", "zero" };
         public static List<String> propertiesToIndex = new List<string> { "date_taken", "description", "tags", "title", "username" };
         public static Dictionary<string, int> weightOfPorperties = new Dictionary<string, int>() {
@@ -567,71 +567,71 @@ namespace Image_Retrieval_Application
             Console.WriteLine("\n\n### Saved Featurepoints to {0} ###\n\n", computedTargetPath + @"\features.xml");
         }
 
-        public static void readTestsetAndCompute()
-        {
-            Console.WriteLine("### Processing Testset ###\n");
-            List<String> imgSubDirectories = new List<string>();
-            List<String> xmlFiles = new List<string>();
-            List<String> csvFiles = new List<string>();
+        //public static void readTestsetAndCompute()
+        //{
+        //    Console.WriteLine("### Processing Testset ###\n");
+        //    List<String> imgSubDirectories = new List<string>();
+        //    List<String> xmlFiles = new List<string>();
+        //    List<String> csvFiles = new List<string>();
 
-            while (xmlFiles.Count == 0 || csvFiles.Count == 0)
-            {
-                try
-                {
-                    imgSubDirectories = getSubDirectories(projectPath + @"\testset\img");
-                    xmlFiles = genXmlFilepaths(imgSubDirectories);
-                    csvFiles = genCSVFilepaths(imgSubDirectories);
-                    computedTargetPath = projectPath + @"\computed\";
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("### Testset not found at '{0}'! Please enter absolute path to testset! ####", projectPath);
-                    string testsetPath = Console.ReadLine();
-                    //xmlDirectory = newXmlPath;    //not neccessary
-                    Console.WriteLine("- Testset-Path set to '{0}'", testsetPath);
-                    Console.WriteLine("\nTrying to fetch Data from " + testsetPath);
-                    if (!testsetPath.EndsWith(@"\"))
-                    {
-                        testsetPath = testsetPath + @"\";
-                    }
-                    computedTargetPath = projectPath + @"\computed\";
-                    imgSubDirectories = getSubDirectories(testsetPath + @"img");
-                    xmlFiles = genXmlFilepaths(imgSubDirectories);
-                    csvFiles = genCSVFilepaths(imgSubDirectories);
-                }
-            }
+        //    while (xmlFiles.Count == 0 || csvFiles.Count == 0)
+        //    {
+        //        try
+        //        {
+        //            imgSubDirectories = getSubDirectories(projectPath + @"\testset\img");
+        //            xmlFiles = genXmlFilepaths(imgSubDirectories);
+        //            csvFiles = genCSVFilepaths(imgSubDirectories);
+        //            computedTargetPath = projectPath + @"\computed\";
+        //        }
+        //        catch (Exception)
+        //        {
+        //            Console.WriteLine("### Testset not found at '{0}'! Please enter absolute path to testset! ####", projectPath);
+        //            string testsetPath = Console.ReadLine();
+        //            //xmlDirectory = newXmlPath;    //not neccessary
+        //            Console.WriteLine("- Testset-Path set to '{0}'", testsetPath);
+        //            Console.WriteLine("\nTrying to fetch Data from " + testsetPath);
+        //            if (!testsetPath.EndsWith(@"\"))
+        //            {
+        //                testsetPath = testsetPath + @"\";
+        //            }
+        //            computedTargetPath = projectPath + @"\computed\";
+        //            imgSubDirectories = getSubDirectories(testsetPath + @"img");
+        //            xmlFiles = genXmlFilepaths(imgSubDirectories);
+        //            csvFiles = genCSVFilepaths(imgSubDirectories);
+        //        }
+        //    }
 
-            Console.WriteLine("### Parsing XML-File(s) ###\n");
-            System.IO.Directory.CreateDirectory(computedTargetPath);
+        //    Console.WriteLine("### Parsing XML-File(s) ###\n");
+        //    System.IO.Directory.CreateDirectory(computedTargetPath);
 
-            Console.WriteLine("### Creating Index ####");
-            foreach (string file in xmlFiles)
-            {
-                dynamic elements = parseXML(file);
-                foreach (var photo in elements.photo)
-                {
-                    addItemToIndex(photo);
-                }
-                addToFileIndex(file, elements);
-            }
+        //    Console.WriteLine("### Creating Index ####");
+        //    foreach (string file in xmlFiles)
+        //    {
+        //        dynamic elements = parseXML(file);
+        //        foreach (var photo in elements.photo)
+        //        {
+        //            addItemToIndex(photo);
+        //        }
+        //        addToFileIndex(file, elements);
+        //    }
 
-            generateFileIndexXML().Save(computedTargetPath + @"\fileIndex.xml");
-            Console.WriteLine("\n\n### Index extended successfully! ###\n\n");
+        //    generateFileIndexXML().Save(computedTargetPath + @"\fileIndex.xml");
+        //    Console.WriteLine("\n\n### Index extended successfully! ###\n\n");
 
-            generateSearchIndexXML(searchIndex).Save(computedTargetPath + @"\searchIndex.xml");
-            Console.WriteLine("\n\n### Index extented at {0} ###\n\n", computedTargetPath + @"\searchIndex.xml");
+        //    generateSearchIndexXML(searchIndex).Save(computedTargetPath + @"\searchIndex.xml");
+        //    Console.WriteLine("\n\n### Index extented at {0} ###\n\n", computedTargetPath + @"\searchIndex.xml");
 
-            Console.WriteLine("\n\n### Extracting Featurepoints ###\n\n");
-            Dictionary<string, decimal[]> additionalPicFeatures = saveFeaturesFromCSV(csvFiles);
+        //    Console.WriteLine("\n\n### Extracting Featurepoints ###\n\n");
+        //    Dictionary<string, decimal[]> additionalPicFeatures = saveFeaturesFromCSV(csvFiles);
 
-            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures)
-            {
-                picFeatures.Add(item.Key, item.Value);
-            }
+        //    foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures)
+        //    {
+        //        picFeatures.Add(item.Key, item.Value);
+        //    }
 
-            generateFeaturePointsXML(picFeatures).Save(computedTargetPath + @"\features.xml");
-            Console.WriteLine("\n\n### Saved Featurepoints to {0} ###\n\n", computedTargetPath + @"\features.xml");
-        }
+        //    generateFeaturePointsXML(picFeatures).Save(computedTargetPath + @"\features.xml");
+        //    Console.WriteLine("\n\n### Saved Featurepoints to {0} ###\n\n", computedTargetPath + @"\features.xml");
+        //}
 
         public static void loadPrecomputedSearchIndex()
         {
@@ -729,7 +729,7 @@ namespace Image_Retrieval_Application
                 string option = Console.ReadLine();
                 if (option == "yes")
                 {
-                    readTestsetAndCompute();
+                    //readTestsetAndCompute();
                 }
             }
             else if (System.IO.File.Exists(computedTargetPath + @"\features.xml") && System.IO.File.Exists(computedTargetPath + @"\searchIndex.xml"))
@@ -751,7 +751,7 @@ namespace Image_Retrieval_Application
                     readDevsetAndCompute();
                     if (option2 == "yes")
                     {
-                        readTestsetAndCompute();
+                        //readTestsetAndCompute();
                     }
                 }
                 else
