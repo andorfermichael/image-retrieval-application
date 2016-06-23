@@ -77,8 +77,36 @@ namespace Image_Retrieval_Application
                 }
             }
 
-            // TODO: Call action for similar images here with parameters imageID and selectedOption
-            Program.retrieveSimilarImages(imageID, selectedOption);
+            //List<string> imagePaths = Program.retrieveSimilarImages(imageID, selectedOption);
+
+            // Insert similar images into modal
+            insertSimilarImagesIntoModal(imagePaths);
+
+            // Open modal window
+            HtmlDocument doc = webbrowser.Document;
+            HtmlElement head = doc.GetElementsByTagName("head")[0];
+            HtmlElement s = doc.CreateElement("script");
+            s.SetAttribute("text", "function openModel() { $('#my-modal').modal('show'); }");
+            head.AppendChild(s);
+            webbrowser.Document.InvokeScript("openModel");
+        }
+
+        protected void insertSimilarImagesIntoModal(List<string> paths)
+        {
+            // Get modal body
+            HtmlElement modalBody = webbrowser.Document.GetElementById("modal-body");
+
+            // Insert images
+            foreach (string path in paths)
+            {
+                HtmlElement div = webbrowser.Document.CreateElement("div");
+                HtmlElement img = webbrowser.Document.CreateElement("img");
+                HtmlElement a = webbrowser.Document.CreateElement("a");
+
+                img.SetAttribute("src", path);
+                img.SetAttribute("alt", "Placeholder for Resultimage");
+                modalBody.AppendChild(img);
+            }
         }
 
         protected void drawResults(List<string> paths, string searchWord, int currentPage, int resultsPerPage)
@@ -110,6 +138,7 @@ namespace Image_Retrieval_Application
                 a.SetAttribute("className", "thumbnail");
                 img.SetAttribute("src", path);
                 img.SetAttribute("alt", "Placeholder for Resultimage");
+                img.SetAttribute("data-target", "#myModal");
                 a.AttachEventHandler("onclick", (sender, args) => onImageClicked(a, EventArgs.Empty));
                 a.AppendChild(img);
                 div.AppendChild(a);
