@@ -144,8 +144,8 @@ namespace Image_Retrieval_Application
         internal static readonly DirectoryInfo INDEX_DIR = new DirectoryInfo("index");
 
         //GLOBAL VARIABLES:
-        public static string imgDirectory = @"D:\0MMT\Digital Media Systems\Übung 3 Projekt\MMEval div400 sets\devset\img";
-        public static string xmlDirectory = @"D:\0MMT\Digital Media Systems\Übung 3 Projekt\MMEval div400 sets\devset\xml";
+        public static string computedTargetPath;
+        public static string projectPath = @"C:\Users\Nico\Downloads\DMasdS";
         public static List<String> stopWords = new List<String> { "able", "about", "above", "abroad", "according", "accordingly", "across", "actually", "adj", "after", "again", "afterwards", "against", "ago", "ahead", "ain't", "all", "allow", "allows", "almost", "alone", "along", "alongside", "already", "also", "although", "always", "am", "amid", "amidst", "among", "amongst", "an", "and", "another", "any", "anybody", "anyhow", "anyone", "anything", "anyway", "anyways", "anywhere", "apart", "appear", "appreciate", "appropriate", "are", "aren't", "around", "as", "a's", "aside", "ask", "asking", "associated", "at", "available", "away", "awfully", "back", "backward", "backwards", "be", "became", "because", "become", "becomes", "becoming", "been", "before", "beforehand", "begin", "behind", "being", "believe", "below", "beside", "besides", "best", "better", "between", "beyond", "both", "brief", "but", "by", "came", "can", "cannot", "cant", "can't", "caption", "cause", "causes", "certain", "certainly", "changes", "clearly", "c'mon", "co", "co.", "com", "come", "comes", "concerning", "consequently", "consider", "considering", "contain", "containing", "contains", "corresponding", "could", "couldn't", "course", "c's", "currently", "dare", "daren't", "definitely", "described", "despite", "did", "didn't", "different", "directly", "do", "does", "doesn't", "doing", "done", "don't", "down", "downwards", "during", "each", "edu", "eg", "eight", "eighty", "either", "else", "elsewhere", "end", "ending", "enough", "entirely", "especially", "et", "etc", "even", "ever", "evermore", "every", "everybody", "everyone", "everything", "everywhere", "ex", "exactly", "example", "except", "fairly", "far", "farther", "few", "fewer", "fifth", "first", "five", "followed", "following", "follows", "for", "forever", "former", "formerly", "forth", "forward", "found", "four", "from", "further", "furthermore", "get", "gets", "getting", "given", "gives", "go", "goes", "going", "gone", "got", "gotten", "greetings", "had", "hadn't", "half", "happens", "hardly", "has", "hasn't", "have", "haven't", "having", "he", "he'd", "he'll", "hello", "help", "hence", "her", "here", "hereafter", "hereby", "herein", "here's", "hereupon", "hers", "herself", "he's", "hi", "him", "himself", "his", "hither", "hopefully", "how", "howbeit", "however", "hundred", "i'd", "ie", "if", "ignored", "i'll", "i'm", "immediate", "in", "inasmuch", "inc", "inc.", "indeed", "indicate", "indicated", "indicates", "inner", "inside", "insofar", "instead", "into", "inward", "is", "isn't", "it", "it'd", "it'll", "its", "it's", "itself", "i've", "just", "k", "keep", "keeps", "kept", "know", "known", "knows", "last", "lately", "later", "latter", "latterly", "least", "less", "lest", "let", "let's", "like", "liked", "likely", "likewise", "little", "look", "looking", "looks", "low", "lower", "ltd", "made", "mainly", "make", "makes", "many", "may", "maybe", "mayn't", "me", "mean", "meantime", "meanwhile", "merely", "might", "mightn't", "mine", "minus", "miss", "more", "moreover", "most", "mostly", "mr", "mrs", "much", "must", "mustn't", "my", "myself", "name", "namely", "nd", "near", "nearly", "necessary", "need", "needn't", "needs", "neither", "never", "neverf", "neverless", "nevertheless", "new", "next", "nine", "ninety", "no", "nobody", "non", "none", "nonetheless", "noone", "no-one", "nor", "normally", "not", "nothing", "notwithstanding", "novel", "now", "nowhere", "obviously", "of", "off", "often", "oh", "ok", "okay", "old", "on", "once", "one", "ones", "one's", "only", "onto", "opposite", "or", "other", "others", "otherwise", "ought", "oughtn't", "our", "ours", "ourselves", "out", "outside", "over", "overall", "own", "particular", "particularly", "past", "per", "perhaps", "placed", "please", "plus", "possible", "presumably", "probably", "provided", "provides", "que", "quite", "qv", "rather", "rd", "re", "really", "reasonably", "recent", "recently", "regarding", "regardless", "regards", "relatively", "respectively", "right", "round", "said", "same", "saw", "say", "saying", "says", "second", "secondly", "see", "seeing", "seem", "seemed", "seeming", "seems", "seen", "self", "selves", "sensible", "sent", "serious", "seriously", "seven", "several", "shall", "shan't", "she", "she'd", "she'll", "she's", "should", "shouldn't", "since", "six", "so", "some", "somebody", "someday", "somehow", "someone", "something", "sometime", "sometimes", "somewhat", "somewhere", "soon", "sorry", "specified", "specify", "specifying", "still", "sub", "such", "sup", "sure", "take", "taken", "taking", "tell", "tends", "th", "than", "thank", "thanks", "thanx", "that", "that'll", "thats", "that's", "that've", "the", "their", "theirs", "them", "themselves", "then", "thence", "there", "thereafter", "thereby", "there'd", "therefore", "therein", "there'll", "there're", "theres", "there's", "thereupon", "there've", "these", "they", "they'd", "they'll", "they're", "they've", "thing", "things", "think", "third", "thirty", "this", "thorough", "thoroughly", "those", "though", "three", "through", "throughout", "thru", "thus", "till", "to", "together", "too", "took", "toward", "towards", "tried", "tries", "truly", "try", "trying", "t's", "twice", "two", "un", "under", "underneath", "undoing", "unfortunately", "unless", "unlike", "unlikely", "until", "unto", "up", "upon", "upwards", "us", "use", "used", "useful", "uses", "using", "usually", "v", "value", "various", "versus", "very", "via", "viz", "vs", "want", "wants", "was", "wasn't", "way", "we", "we'd", "welcome", "well", "we'll", "went", "were", "we're", "weren't", "we've", "what", "whatever", "what'll", "what's", "what've", "when", "whence", "whenever", "where", "whereafter", "whereas", "whereby", "wherein", "where's", "whereupon", "wherever", "whether", "which", "whichever", "while", "whilst", "whither", "who", "who'd", "whoever", "whole", "who'll", "whom", "whomever", "who's", "whose", "why", "will", "willing", "wish", "with", "within", "without", "wonder", "won't", "would", "wouldn't", "yes", "yet", "you", "you'd", "you'll", "your", "you're", "yours", "yourself", "yourselves", "you've", "zero" };
         public static List<String> propertiesToIndex = new List<string> { "date_taken", "description", "tags", "title", "username" };
         public static Dictionary<string, int> weightOfPorperties = new Dictionary<string, int>() {
@@ -155,7 +155,7 @@ namespace Image_Retrieval_Application
             {"title",10 },
             {"username",4 }
         };
-        public static Dictionary<string, Dictionary<dynamic, int>> searchIndex = new Dictionary<string, Dictionary<dynamic, int>>(); //TODO searchINdex auch xmln
+        public static Dictionary<string, Dictionary<string, int>> searchIndex = new Dictionary<string, Dictionary<string, int>>(); //TODO searchINdex auch xmln
         public static Dictionary<string, string> fileIndex = new Dictionary<string, string>();
         public static Dictionary<string, double[]> picFeatures = new Dictionary<string, double[]>();
 
@@ -166,7 +166,6 @@ namespace Image_Retrieval_Application
         static string solutionDirectory = Path.GetDirectoryName(Path.GetDirectoryName(Directory.GetCurrentDirectory()));
 
         public static List<string> startTagSearch(string searchValue) {
-            // TODO: Replace with real function code
             Debug.WriteLine("Search Value: " + searchValue.ToLower());
             return getImgPaths(searchFor(searchValue.ToLower()));
         }
@@ -188,7 +187,6 @@ namespace Image_Retrieval_Application
 
         public static void startQueryByExampleSearch(string imageLocation)
         {
-            // TODO: Replace with real function code
             Debug.WriteLine("Example Location: " + imageLocation);
         }
 
@@ -261,15 +259,15 @@ namespace Image_Retrieval_Application
         {
             //  { "date_taken", "description", "tags", "title", "username" }
             foreach (string word in splitIntoWords(Item.date_taken))
-                addWordToIndex(Item, word.ToLower(), weightOfPorperties["date_taken"]);
+                addWordToIndex(Item.id, word.ToLower(), weightOfPorperties["date_taken"]);
             foreach (string word in splitIntoWords(Item.description))
-                addWordToIndex(Item, word.ToLower(), weightOfPorperties["description"]);
+                addWordToIndex(Item.id, word.ToLower(), weightOfPorperties["description"]);
             foreach (string word in splitIntoWords(Item.tags))
-                addWordToIndex(Item, word.ToLower(), weightOfPorperties["tags"]);
+                addWordToIndex(Item.id, word.ToLower(), weightOfPorperties["tags"]);
             foreach (string word in splitIntoWords(Item.title))
-                addWordToIndex(Item, word.ToLower(), weightOfPorperties["title"]);
+                addWordToIndex(Item.id, word.ToLower(), weightOfPorperties["title"]);
             foreach (string word in splitIntoWords(Item.username))
-                addWordToIndex(Item, word.ToLower(), weightOfPorperties["username"]);
+                addWordToIndex(Item.id, word.ToLower(), weightOfPorperties["username"]);
         }
 
         private static List<String> splitIntoWords(string completeString)
@@ -281,29 +279,29 @@ namespace Image_Retrieval_Application
             return words;
         }
 
-        public static void addWordToIndex(dynamic Item, string Property, int Weight)
+        public static void addWordToIndex(string ItemID, string Property, int Weight)
         {
             //{ "date_taken", "description", "tags", "title", "username" };
             if (!(stopWords.Contains(Property)) && (Property.Length >= 3))
             {   //check if it is a stopWord, if not, add it to searchIndex
                 if (!(searchIndex.ContainsKey(Property)))
                 {   //check if Key exists already in Dictionary - if not:
-                    searchIndex.Add(Property, new Dictionary<dynamic, int> { { Item, Weight } });
+                    searchIndex.Add(Property, new Dictionary<string, int> { { ItemID, Weight } });
                     //Console.WriteLine("# Adding Key '{0}' with Item '{1}'#\n", word, Item.id);
                     Console.Write(".");
                 }
                 else
                 {   //key exists already
                     //Console.WriteLine("## Key '{0}' already exists, adding Item '{1}' to set#\n", word, Item.id);
-                    if (!(searchIndex[Property].ContainsKey(Item)))
+                    if (!(searchIndex[Property].ContainsKey(ItemID)))
                     {    //check if Item has already been added to indexed word/property - if not add it with current score
-                        searchIndex[Property].Add(Item, Weight);
+                        searchIndex[Property].Add(ItemID, Weight);
                     }
                     else
                     {
                         //item is already in list of indexed word/property, add scorepoints
                         //Console.WriteLine("Current Score of word " + Property + ": " + searchIndex[Property][Item]);
-                        searchIndex[Property][Item] += Weight;
+                        searchIndex[Property][ItemID] += Weight;
                     }
                     Console.Write(".");
                 }
@@ -333,23 +331,23 @@ namespace Image_Retrieval_Application
             }
         }
 
-        private static List<KeyValuePair<dynamic,int>> searchFor(string searchString)
+        private static Dictionary<string,int> searchFor(string searchString)
         {
-            Dictionary<dynamic, int> results = new Dictionary<dynamic, int>();
-            Dictionary<dynamic, int> resultsSingleQuery;
+            Dictionary<string, int> results = new Dictionary<string, int>();
+            Dictionary<string, int> resultsSingleQuery;
 
             foreach (string word in splitIntoWords(searchString))
             {
-                resultsSingleQuery = new Dictionary<dynamic, int>();
+                resultsSingleQuery = new Dictionary<string, int>();
                 try
                 {
-                    foreach (KeyValuePair<dynamic, int> entry in searchIndex[word])
+                    foreach (KeyValuePair<string, int> entry in searchIndex[word])
                     {
                         resultsSingleQuery.Add(entry.Key, entry.Value);
                     }
                     if (results.Count == 0)
                     {
-                        foreach (KeyValuePair<dynamic, int> entry in resultsSingleQuery)
+                        foreach (KeyValuePair<string, int> entry in resultsSingleQuery)
                         {
                             results.Add(entry.Key, entry.Value);
                         }
@@ -360,7 +358,7 @@ namespace Image_Retrieval_Application
                                  .ToDictionary(x => x.Key, x => x.Value);
                     }
                 }
-                catch (KeyNotFoundException e)
+                catch (KeyNotFoundException)
                 {
                     Console.WriteLine("# Search for keyword '{0}' threw 0 results!",word);
                 }
@@ -370,31 +368,16 @@ namespace Image_Retrieval_Application
                 }
                
             }
+            return results.OrderByDescending(key => key.Value).ToDictionary(key => key.Key, key => key.Value);
 
-            return sortResultsByScore(results);
         }
 
-        private static List<string> getImgPaths(List<KeyValuePair<dynamic,int>> results)
+        private static List<string> getImgPaths(Dictionary<string,int> results)
         {
             List<string> matchingImages = new List<string>();
-            foreach (KeyValuePair<dynamic, int> item in results)
-                matchingImages.Add(fileIndex[item.Key.id]);
+            foreach (KeyValuePair<string, int> item in results)
+                matchingImages.Add(fileIndex[item.Key]);
             return matchingImages;
-        }
-
-        private static List<KeyValuePair<dynamic, int>> sortResultsByScore(Dictionary<dynamic, int> results)
-        {
-            List<KeyValuePair<dynamic, int>> sortedResults = results.ToList();
-
-            sortedResults.Sort(
-                delegate (KeyValuePair<dynamic, int> pair1,
-                KeyValuePair<dynamic, int> pair2)
-                {
-                    return pair2.Value.CompareTo(pair1.Value);
-                }
-            );
-
-            return sortedResults;
         }
 
         private static List<KeyValuePair<dynamic,int>> paginate(List<KeyValuePair<dynamic, int>> results, int page, int resultsPerPage)
@@ -413,6 +396,48 @@ namespace Image_Retrieval_Application
             return resultsForPage;
         }
 
+        private static XElement generateFeaturePointsXML(Dictionary<string, decimal[]> features)
+        {
+            XElement root = new XElement("root");
+            foreach (KeyValuePair<string, decimal[]> entry in features)
+            {
+                XElement image = new XElement("image");
+                XAttribute id = new XAttribute("id", entry.Key);
+                image.Add(id);
+                foreach (Decimal feature in entry.Value)
+                {
+                    XElement element = new XElement("feature");
+                    XAttribute value = new XAttribute("value", feature);
+                    element.Add(value);
+                    image.Add(element);
+                }
+                root.Add(image);
+            }
+            return root;
+        }
+
+        private static XElement generateSearchIndexXML(Dictionary<string, Dictionary<string, int>> index)
+        {
+            XElement root = new XElement("root");
+            foreach (KeyValuePair<string, Dictionary<string, int>> entry in index)
+            {
+                XElement keyword = new XElement("keyword");
+                XAttribute value = new XAttribute("value", entry.Key);
+                keyword.Add(value);
+
+                foreach (KeyValuePair<string, int> subentry in entry.Value.OrderByDescending(key => key.Value))
+                {
+                    XElement image = new XElement("image");
+                    XAttribute id = new XAttribute("id", subentry.Key);
+                    XAttribute score = new XAttribute("score", subentry.Value);
+                    image.Add(id);
+                    image.Add(score);
+                    keyword.Add(image);
+                }
+                root.Add(keyword);
+            }
+            return root;
+        }
 
         public static Dictionary<string, double> computeDistance(Dictionary<string, decimal[]> resultFeatures)  {                 
             //Extract features for SearchedImage
@@ -443,49 +468,81 @@ namespace Image_Retrieval_Application
             Application.SetCompatibleTextRenderingDefault(false);
 
             Console.WriteLine("### Grabbing IMG and XML-Files ###\n");
-            List<String> imgSubDirectories = getSubDirectories(imgDirectory);
-            List<String> xmlFiles = genXmlFilepaths(imgSubDirectories);
-            List<String> csvFiles = genCSVFilepaths(imgSubDirectories);
-           
-           
-            while (xmlFiles.Count == 0)
+
+            List<String> imgSubDirectories = new List<string>();
+            List<String> xmlFiles = new List<string>();
+            List<String> csvFiles = new List<string>();
+
+            while (!System.IO.Directory.Exists(projectPath))
             {
+                Console.WriteLine("Project Directory does not contain an neccessary directory/seems to be empty or cannot be found/accessed: '{0}'\n\nEnter new absolute Path to Project-Directory:\n(Project Directory must contain following Directories: 'xml' - XML-Metadatas,'img' - Images and 'descvis' - Featurepoints)\t", projectPath);
+                string newProjectPath = Console.ReadLine();
+                //xmlDirectory = newXmlPath;    //not neccessary
+                Console.WriteLine("- Project-Path set to '{0}'", newProjectPath);
+                projectPath = newProjectPath;
+            }
+
+            while (xmlFiles.Count == 0 || csvFiles.Count == 0)
+            {
+                List<String> imgSubDirectories = getSubDirectories(imgDirectory);
+                List<String> xmlFiles = genXmlFilepaths(imgSubDirectories);
+                List<String> csvFiles = genCSVFilepaths(imgSubDirectories);
+           
                 try
                 {
-                    throw new FileNotFoundException();
+                    imgSubDirectories = getSubDirectories(projectPath + @"\img");
+                    xmlFiles = genXmlFilepaths(imgSubDirectories);
+                    csvFiles = genCSVFilepaths(imgSubDirectories);
+                    computedTargetPath = projectPath + @"\computed\";
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Fatal! XML-Direcotry seems to be empty or cannot be found/accessed: '{0}'\n{1}\n\nEnter new absolute Path to XML-Directory:\t", xmlDirectory, e.Message);
-                    string newXmlPath = Console.ReadLine();
+                    Console.WriteLine("Project Directory does not contain an neccessary directory/seems to be empty or cannot be found/accessed: '{0}'\n{1}\n\nEnter new absolute Path to Project-Directory:\n(Project Directory must contain following Directories: 'xml' - XML-Metadatas,'img' - Images and 'descvis' - Featurepoints)\t", projectPath);
+                    string newProjectPath = Console.ReadLine();
                     //xmlDirectory = newXmlPath;    //not neccessary
-                    Console.WriteLine("- XML-Path set to '{0}'\n\nPlease enter a new absolute path to IMG-Directory:\t", newXmlPath);
+                    Console.WriteLine("- Project-Path set to '{0}'", newProjectPath);
                     string newImgPath = Console.ReadLine();
                     Console.WriteLine("\nTrying to fetch Data with new paths...");
-                    imgSubDirectories = getSubDirectories(newImgPath);
+                    if (!newProjectPath.EndsWith(@"\"))
+                    {
+                        newProjectPath = newProjectPath + @"\";
+                    }
+                    computedTargetPath = projectPath + @"computed\";
+                    imgSubDirectories = getSubDirectories(newProjectPath + @"img");
                     xmlFiles = genXmlFilepaths(imgSubDirectories);
                     csvFiles = genCSVFilepaths(imgSubDirectories);
                 }
-
             }
+
             Console.WriteLine("### Parsing XML-File(s) ###\n");
 
             Console.WriteLine("### Creating Index (this can take a while) ####");
-            //foreach (string file in xmlFiles)
-            //{
-            //    dynamic elements = parseXML(file);
-            //    foreach (var photo in elements.photo)
-            //    {
-            //        addItemToIndex(photo);
-            //    }
-            //}
 
             Dictionary<string, double> resultDistances = computeDistance(saveFeaturesFromCSV(csvFiles));
 
-            //startSimilaritySearch(resultDistances);
 
-
+            foreach (string file in xmlFiles)
+            {
+                dynamic elements = parseXML(file);
+                foreach (var photo in elements.photo)
+                {
+                    addItemToIndex(photo);
+                }
+            }
             Console.WriteLine("\n\n### Index creation successful! ###\n\n");
+            if (!System.IO.Directory.Exists(computedTargetPath))
+            {
+                System.IO.Directory.CreateDirectory(computedTargetPath);
+            }
+            
+            generateSearchIndexXML(searchIndex).Save(computedTargetPath + @"\searchIndex.xml");
+            Console.WriteLine("\n\n### Index saved to {0} ###\n\n", computedTargetPath + @"\searchIndex.xml");
+
+            Console.WriteLine("\n\n### Extracting Featurepoints ###\n\n");
+            Dictionary<string, decimal[]> features = saveFeaturesFromCSV(csvFiles);
+            generateFeaturePointsXML(features).Save(computedTargetPath + @"\features.xml");
+            Console.WriteLine("\n\n### Saved Featurepoints to {0} ###\n\n", computedTargetPath + @"\features.xml");
+   
             Console.WriteLine("Press Enter to continue:");
             Console.ReadLine();
             //printIndex();
