@@ -232,7 +232,7 @@ namespace Image_Retrieval_Application
 
                         for (int j = 1; j < values.Length; j++)
                         {   
-                            featuresPerLine[j-1] = Decimal.Parse((values[j].Replace(".", ",")), System.Globalization.NumberStyles.Float);
+                            featuresPerLine[j-1] = Decimal.Parse(values[j].Replace(".", ","), System.Globalization.NumberStyles.Float);
                             //Console.WriteLine((featuresPerLine[j-1]));
                         }
                         try
@@ -482,15 +482,21 @@ namespace Image_Retrieval_Application
 
             List<String> imgSubDirectories = new List<string>();
             List<String> xmlFiles = new List<string>();
-            List<String> csvFiles = new List<string>();
+            List<String> csvFilesCM = new List<string>();
+            List<String> csvFilesCSD = new List<string>();
+            List<String> csvFilesLPB = new List<string>();
+            List<String> csvFilesHOG = new List<string>();
 
-            while (xmlFiles.Count == 0 || csvFiles.Count == 0)
+            while (xmlFiles.Count == 0 || csvFilesCM.Count == 0 || csvFilesCSD.Count == 0 || csvFilesLPB.Count == 0 || csvFilesHOG.Count == 0)
             {
                 try
                 {
                     imgSubDirectories = getSubDirectories(projectPath + @"\img");
                     xmlFiles = genXmlFilepaths(imgSubDirectories);
-                    csvFiles = genCSVFilepaths(imgSubDirectories);
+                    csvFilesCM = genCSVFilepaths(imgSubDirectories);
+                    csvFilesCSD = genCSVFilepaths(imgSubDirectories);
+                    csvFilesLPB = genCSVFilepaths(imgSubDirectories);
+                    csvFilesHOG = genCSVFilepaths(imgSubDirectories);
                     computedTargetPath = projectPath + @"\computed\";
                 }
                 catch (Exception)
@@ -508,7 +514,10 @@ namespace Image_Retrieval_Application
                     computedTargetPath = projectPath + @"\computed\";
                     imgSubDirectories = getSubDirectories(newProjectPath + @"img");
                     xmlFiles = genXmlFilepaths(imgSubDirectories);
-                    csvFiles = genCSVFilepaths(imgSubDirectories);
+                    csvFilesCM = genCSVFilepaths(imgSubDirectories);
+                    csvFilesCSD = genCSVFilepaths(imgSubDirectories);
+                    csvFilesLPB = genCSVFilepaths(imgSubDirectories);
+                    csvFilesHOG = genCSVFilepaths(imgSubDirectories);
                 }
             }
 
@@ -534,7 +543,7 @@ namespace Image_Retrieval_Application
             Console.WriteLine("\n\n### Index saved to {0} ###\n\n", computedTargetPath + @"\searchIndex.xml");
 
             Console.WriteLine("\n\n### Extracting Featurepoints ###\n\n");
-            picFeatures = saveFeaturesFromCSV(csvFiles);
+            //picFeatures = saveFeaturesFromCSV(csvFiles); //TODO ADD ALL CSVs mit key zb CM
             generateFeaturePointsXML(picFeatures).Save(computedTargetPath + @"\features.xml");
             Console.WriteLine("\n\n### Saved Featurepoints to {0} ###\n\n", computedTargetPath + @"\features.xml");
         }
