@@ -316,10 +316,21 @@ namespace Image_Retrieval_Application
             directory = directory.Replace(@"\xml\", @"\img\").Substring(0, directory.Length - 4) + @"\";
             foreach (dynamic item in elements.photo)
             {
-                fileIndex.Add(item.id, directory + item.id + ".jpg");
-                //Console.WriteLine(directory + item.id + ".jpg");
-                string picPath = (string) directory + item.id + ".jpg";
-                //Console.WriteLine(picPath);
+
+                try
+                {
+
+                    fileIndex.Add(item.id, directory + item.id + ".jpg");
+                    //Console.WriteLine(directory + item.id + ".jpg");
+                    string picPath = (string)directory + item.id + ".jpg";
+                    //Console.WriteLine(picPath);
+
+                }
+                catch (ArgumentException)
+                {
+                    Console.WriteLine("Entry skipped");
+                }
+
             }
         }
 
