@@ -463,6 +463,84 @@ namespace Image_Retrieval_Application
         }
 
 
+
+
+        ////TESTING CHECK IF FEATURE POINTS ARE IDENT
+        //private static void ImageFeatures()
+        //{
+        //    Dictionary<string, Bitmap> testImages = new Dictionary<string, Bitmap>();
+
+        //    testImages.Add("132872354", (Bitmap)Bitmap.FromFile("test_imgs/132872354.jpg"));
+
+        //    Bitmap bmp = (Bitmap)Bitmap.FromFile("test_imgs/acropolis_athens.jpg");
+
+        //    LocalBinaryPattern test = new LocalBinaryPattern();
+
+        //    List<double[]> result = test.ProcessImage(bmp);
+
+
+        //    foreach (var item in result)
+        //    {
+        //        foreach (var item1 in item)
+        //        {
+        //            if ((item1 != 0)) 
+        //            Console.WriteLine(item1);
+        //        }
+                
+        //    }
+
+        //    for (int i = 0; i < result.Count; i++)
+        //    {
+        //        //Console.WriteLine(result[i].ToString());
+        //    }
+
+
+        //    //testImages.Add("img_acropolis", (Bitmap)Bitmap.FromFile("test_imgs/acropolis_athens.jpg"));
+        //    //testImages.Add("img_cathedral", (Bitmap)Bitmap.FromFile("test_imgs/amiens_cathedral.jpg"));
+        //    //testImages.Add("img_bigben", (Bitmap)Bitmap.FromFile("test_imgs/big_ben.jpg"));
+
+        //    int numberOfWords = 6; // number of cluster centers: typically >>100
+
+        //    // Create a Binary-Split clustering algorithm
+        //    BinarySplit binarySplit = new BinarySplit(numberOfWords);
+
+        //    IBagOfWords<Bitmap> bow;
+        //    // Create bag-of-words (BoW) with the given algorithm
+        //    BagOfVisualWords surfBow = new BagOfVisualWords(binarySplit);
+
+        //    // Compute the BoW codebook using training images only
+        //    Bitmap[] bmps = new Bitmap[testImages.Count];
+        //    testImages.Values.CopyTo(bmps, 0);
+        //    surfBow.Compute(bmps);
+        //    bow = surfBow; 	// this model needs to be saved once it is calculated: only compute it once to calculate features 
+        //    // from the collection as well as for new queries.
+        //    // THE SAME TRAINED MODEL MUST BE USED TO GET THE SAME FEATURES!!!
+
+        //    Dictionary<string, double[]> testImageFeatures = new Dictionary<string, double[]>();
+
+        //    // Extract features for all images
+        //    foreach (string imagename in testImages.Keys)
+        //    {
+        //        double[] featureVector = bow.GetFeatureVector(testImages[imagename]);
+        //        testImageFeatures.Add(imagename, featureVector);
+        //        Console.Out.WriteLine(imagename + " features: " + featureVector.ToString(DefaultArrayFormatProvider.InvariantCulture));
+        //        Console.WriteLine(featureVector[0]);
+        //    }
+
+        //    //// Calculate Image Similarities
+        //    //string[] imagenames = new string[testImageFeatures.Keys.Count];
+        //    //testImageFeatures.Keys.CopyTo(imagenames, 0);
+        //    //for (int i = 0; i < imagenames.Length; i++)
+        //    //{
+        //    //    for (int j = i + 1; j < imagenames.Length; j++)
+        //    //    {
+        //    //        double dist = Distance.Cosine(testImageFeatures[imagenames[i]], testImageFeatures[imagenames[j]]);
+        //    //        Console.Out.WriteLine(imagenames[i] + " <-> " + imagenames[j] + " distance: " + dist.ToString());
+        //    //    }
+        //    //}
+        //}
+
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
