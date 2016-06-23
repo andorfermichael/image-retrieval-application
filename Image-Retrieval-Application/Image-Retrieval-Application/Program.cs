@@ -566,6 +566,22 @@ namespace Image_Retrieval_Application
             fileIndex = precomputedFileIndex;
         }
 
+        public static void loadPrecomputedFeatures()
+        {
+            dynamic elements = parseXML(computedTargetPath + @"\features.xml");
+            Dictionary<string, decimal[]> precomputedFeatures = new Dictionary<string, decimal[]>();
+            foreach (var image in elements.image)
+            {
+                List<decimal> decimalCollection = new List<decimal>();
+                foreach (var feature in image.feature)
+                {
+                    decimalCollection.Add(Decimal.Parse(feature.value.Replace(".",","), System.Globalization.NumberStyles.Float));
+                }
+                precomputedFeatures.Add(image.id, decimalCollection.ToArray());
+            }
+            picFeatures = precomputedFeatures;
+        }
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -614,6 +630,7 @@ namespace Image_Retrieval_Application
                     //<string, Dictionary<string, int>>
                     loadPrecomputedSearchIndex();
                     loadPrecomputedFileIndex();
+                    loadPrecomputedFeatures();
                 }
 
 
