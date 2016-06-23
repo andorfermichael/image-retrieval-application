@@ -283,5 +283,10 @@ namespace Image_Retrieval_Application
             }
             return resultsForPage;
         }
+
+        private void webbrowser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+
+        }
     }
 }
