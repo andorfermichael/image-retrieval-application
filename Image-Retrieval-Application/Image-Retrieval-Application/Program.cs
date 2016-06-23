@@ -619,17 +619,16 @@ namespace Image_Retrieval_Application
 
             }
 
+            //Dictionary<string, double> resultDistances = computeDistance("REAL ID HERE", picFeatures);
 
-            Dictionary<string, double> resultDistances = computeDistance("REAL ID HERE", features);
+            ////startSimilaritySearch(resultDistances);
 
-            //startSimilaritySearch(resultDistances);
+            //List<string> test = getImgPathsForImageSearch(resultDistances);
 
-            List<string> test = getImgPathsForImageSearch(resultDistances);
-
-            for (int i = 0; i < test.Count; i++)
-            {
-                Console.WriteLine(test[i]);
-            }
+            //for (int i = 0; i < test.Count; i++)
+            //{
+            //    Console.WriteLine(test[i]);
+            //}
 
             Console.WriteLine("Press Enter to continue:");
             Console.ReadLine();
