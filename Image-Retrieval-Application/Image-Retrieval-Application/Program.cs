@@ -483,19 +483,15 @@ namespace Image_Retrieval_Application
             }
 
             while (xmlFiles.Count == 0 || csvFiles.Count == 0)
-            {
-                List<String> imgSubDirectories = getSubDirectories(imgDirectory);
-                List<String> xmlFiles = genXmlFilepaths(imgSubDirectories);
-                List<String> csvFiles = genCSVFilepaths(imgSubDirectories);
-           
+            {           
                 try
                 {
                     imgSubDirectories = getSubDirectories(projectPath + @"\img");
                     xmlFiles = genXmlFilepaths(imgSubDirectories);
                     csvFiles = genCSVFilepaths(imgSubDirectories);
-                    computedTargetPath = projectPath + @"\computed\";
+                    computedTargetPath = projectPath + @"computed\";
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Console.WriteLine("Project Directory does not contain an neccessary directory/seems to be empty or cannot be found/accessed: '{0}'\n{1}\n\nEnter new absolute Path to Project-Directory:\n(Project Directory must contain following Directories: 'xml' - XML-Metadatas,'img' - Images and 'descvis' - Featurepoints)\t", projectPath);
                     string newProjectPath = Console.ReadLine();
