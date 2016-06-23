@@ -80,13 +80,13 @@ namespace Image_Retrieval_Application
             //List<string> imagePaths = Program.retrieveSimilarImages(imageID, selectedOption);
 
             // Insert similar images into modal
-            insertSimilarImagesIntoModal(imagePaths);
+            //insertSimilarImagesIntoModal(imagePaths);
 
             // Open modal window
             HtmlDocument doc = webbrowser.Document;
             HtmlElement head = doc.GetElementsByTagName("head")[0];
             HtmlElement s = doc.CreateElement("script");
-            s.SetAttribute("text", "function openModel() { $('#my-modal').modal('show'); }");
+            s.SetAttribute("text", "function openModel() { $('#my-modal').modal('show')}");
             head.AppendChild(s);
             webbrowser.Document.InvokeScript("openModel");
         }
@@ -138,7 +138,7 @@ namespace Image_Retrieval_Application
                 a.SetAttribute("className", "thumbnail");
                 img.SetAttribute("src", path);
                 img.SetAttribute("alt", "Placeholder for Resultimage");
-                img.SetAttribute("data-target", "#myModal");
+                img.SetAttribute("data-target", "#my-modal");
                 a.AttachEventHandler("onclick", (sender, args) => onImageClicked(a, EventArgs.Empty));
                 a.AppendChild(img);
                 div.AppendChild(a);
