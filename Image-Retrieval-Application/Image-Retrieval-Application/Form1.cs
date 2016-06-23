@@ -73,7 +73,7 @@ namespace Image_Retrieval_Application
             {
                 if (item.GetAttribute("value") == webbrowser.Document.GetElementById("sel1").GetAttribute("value"))
                 {
-                    selectedOption = item.InnerText;
+                    selectedOption = webbrowser.Document.GetElementById("sel1").GetAttribute("value").ToUpper();
                 }
             }
 
