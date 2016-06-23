@@ -562,76 +562,98 @@ namespace Image_Retrieval_Application
             generateFeaturePointsXML(picFeatures["HOG"]).Save(computedTargetPath + @"\featuresHOG.xml");
 
 
-
             //OLD: generateFeaturePointsXML(picFeatures).Save(computedTargetPath + @"\features.xml");
+            Console.WriteLine("\n\n### Saved Featurepoints to {0} ###\n\n", computedTargetPath);
+        }
+
+        public static void readTestsetAndCompute()
+        {
+            Console.WriteLine("### Processing Testset ###\n");
+            List<String> imgSubDirectories = new List<string>();
+            List<String> xmlFiles = new List<string>();
+            List<String> csvFilesCM = new List<string>();
+            List<String> csvFilesCSD = new List<string>();
+            List<String> csvFilesLBP = new List<string>();
+            List<String> csvFilesHOG = new List<string>();
+
+            while (xmlFiles.Count == 0 || csvFilesCM.Count == 0 || csvFilesCSD.Count == 0 || csvFilesLBP.Count == 0 || csvFilesHOG.Count == 0)
+            {
+                try
+                {
+                    imgSubDirectories = getSubDirectories(projectPath + @"\testset\img");
+                    xmlFiles = genXmlFilepaths(imgSubDirectories);
+                    csvFilesCM = genCSVFilepaths(imgSubDirectories, "CM");
+                    csvFilesCSD = genCSVFilepaths(imgSubDirectories, "CSD");
+                    csvFilesLBP = genCSVFilepaths(imgSubDirectories, "LBP");
+                    csvFilesHOG = genCSVFilepaths(imgSubDirectories, "HOG");
+                    computedTargetPath = projectPath + @"\computed\";
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("### Testset not found at '{0}'! Please enter absolute path to testset! ####", projectPath);
+                    string testsetPath = Console.ReadLine();
+                    //xmlDirectory = newXmlPath;    //not neccessary
+                    Console.WriteLine("- Testset-Path set to '{0}'", testsetPath);
+                    Console.WriteLine("\nTrying to fetch Data from " + testsetPath);
+                    if (!testsetPath.EndsWith(@"\"))
+                    {
+                        testsetPath = testsetPath + @"\";
+                    }
+                    computedTargetPath = projectPath + @"\computed\";
+                    imgSubDirectories = getSubDirectories(testsetPath + @"img");
+                    xmlFiles = genXmlFilepaths(imgSubDirectories);
+                    csvFilesCM = genCSVFilepaths(imgSubDirectories, "CM");
+                    csvFilesCSD = genCSVFilepaths(imgSubDirectories, "CSD");
+                    csvFilesLBP = genCSVFilepaths(imgSubDirectories, "LBP");
+                    csvFilesHOG = genCSVFilepaths(imgSubDirectories, "HOG");
+                }
+            }
+
+            Console.WriteLine("### Parsing XML-File(s) ###\n");
+            System.IO.Directory.CreateDirectory(computedTargetPath);
+
+            Console.WriteLine("### Creating Index ####");
+            foreach (string file in xmlFiles)
+            {
+                dynamic elements = parseXML(file);
+                foreach (var photo in elements.photo)
+                {
+                    addItemToIndex(photo);
+                }
+                addToFileIndex(file, elements);
+            }
+
+            generateFileIndexXML().Save(computedTargetPath + @"\fileIndex.xml");
+            Console.WriteLine("\n\n### Index extended successfully! ###\n\n");
+
+            generateSearchIndexXML(searchIndex).Save(computedTargetPath + @"\searchIndex.xml");
+            Console.WriteLine("\n\n### Index extented at {0} ###\n\n", computedTargetPath + @"\searchIndex.xml");
+
+            Console.WriteLine("\n\n### Extracting Featurepoints ###\n\n");
+            Dictionary<string, Dictionary<string, decimal[]>> additionalPicFeatures = new Dictionary<string, Dictionary<string, decimal[]>>();
+
+            additionalPicFeatures.Add("CM", saveFeaturesFromCSV(csvFilesCM));
+            additionalPicFeatures.Add("CSD", saveFeaturesFromCSV(csvFilesCSD));
+            additionalPicFeatures.Add("LBP", saveFeaturesFromCSV(csvFilesLBP));
+            additionalPicFeatures.Add("HOG", saveFeaturesFromCSV(csvFilesHOG));
+
+            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["CM"])
+                picFeatures["CM"].Add(item.Key, item.Value);
+            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["CSD"])
+                picFeatures["CSD"].Add(item.Key, item.Value);
+            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["LBP"])
+                picFeatures["LBP"].Add(item.Key, item.Value);
+            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["HOG"])
+                picFeatures["HOG"].Add(item.Key, item.Value);
+
+            generateFeaturePointsXML(picFeatures["CM"]).Save(computedTargetPath + @"\featuresCM.xml");
+            generateFeaturePointsXML(picFeatures["CSD"]).Save(computedTargetPath + @"\featuresCSD.xml");
+            generateFeaturePointsXML(picFeatures["LBP"]).Save(computedTargetPath + @"\featuresLBP.xml");
+            generateFeaturePointsXML(picFeatures["HOG"]).Save(computedTargetPath + @"\featuresHOG.xml");
+
             Console.WriteLine("\n\n### Saved Featurepoints to {0} ###\n\n", computedTargetPath + @"\features.xml");
         }
 
-        //public static void readTestsetAndCompute()
-        //{
-        //    Console.WriteLine("### Processing Testset ###\n");
-        //    List<String> imgSubDirectories = new List<string>();
-        //    List<String> xmlFiles = new List<string>();
-        //    List<String> csvFiles = new List<string>();
-
-        //    while (xmlFiles.Count == 0 || csvFiles.Count == 0)
-        //    {
-        //        try
-        //        {
-        //            imgSubDirectories = getSubDirectories(projectPath + @"\testset\img");
-        //            xmlFiles = genXmlFilepaths(imgSubDirectories);
-        //            csvFiles = genCSVFilepaths(imgSubDirectories);
-        //            computedTargetPath = projectPath + @"\computed\";
-        //        }
-        //        catch (Exception)
-        //        {
-        //            Console.WriteLine("### Testset not found at '{0}'! Please enter absolute path to testset! ####", projectPath);
-        //            string testsetPath = Console.ReadLine();
-        //            //xmlDirectory = newXmlPath;    //not neccessary
-        //            Console.WriteLine("- Testset-Path set to '{0}'", testsetPath);
-        //            Console.WriteLine("\nTrying to fetch Data from " + testsetPath);
-        //            if (!testsetPath.EndsWith(@"\"))
-        //            {
-        //                testsetPath = testsetPath + @"\";
-        //            }
-        //            computedTargetPath = projectPath + @"\computed\";
-        //            imgSubDirectories = getSubDirectories(testsetPath + @"img");
-        //            xmlFiles = genXmlFilepaths(imgSubDirectories);
-        //            csvFiles = genCSVFilepaths(imgSubDirectories);
-        //        }
-        //    }
-
-        //    Console.WriteLine("### Parsing XML-File(s) ###\n");
-        //    System.IO.Directory.CreateDirectory(computedTargetPath);
-
-        //    Console.WriteLine("### Creating Index ####");
-        //    foreach (string file in xmlFiles)
-        //    {
-        //        dynamic elements = parseXML(file);
-        //        foreach (var photo in elements.photo)
-        //        {
-        //            addItemToIndex(photo);
-        //        }
-        //        addToFileIndex(file, elements);
-        //    }
-
-        //    generateFileIndexXML().Save(computedTargetPath + @"\fileIndex.xml");
-        //    Console.WriteLine("\n\n### Index extended successfully! ###\n\n");
-
-        //    generateSearchIndexXML(searchIndex).Save(computedTargetPath + @"\searchIndex.xml");
-        //    Console.WriteLine("\n\n### Index extented at {0} ###\n\n", computedTargetPath + @"\searchIndex.xml");
-
-        //    Console.WriteLine("\n\n### Extracting Featurepoints ###\n\n");
-        //    Dictionary<string, decimal[]> additionalPicFeatures = saveFeaturesFromCSV(csvFiles);
-
-        //    foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures)
-        //    {
-        //        picFeatures.Add(item.Key, item.Value);
-        //    }
-
-        //    generateFeaturePointsXML(picFeatures).Save(computedTargetPath + @"\features.xml");
-        //    Console.WriteLine("\n\n### Saved Featurepoints to {0} ###\n\n", computedTargetPath + @"\features.xml");
-        //}
 
         public static void loadPrecomputedSearchIndex()
         {
@@ -660,20 +682,38 @@ namespace Image_Retrieval_Application
             fileIndex = precomputedFileIndex;
         }
 
-        public static void loadPrecomputedFeatures()
+        public static void loadAllPrecomputedFeatures()
         {
-            dynamic elements = parseXML(computedTargetPath + @"\features.xml");
+            Dictionary<string, Dictionary<string, decimal[]>> additionalPicFeatures = new Dictionary<string, Dictionary<string, decimal[]>>();
+            additionalPicFeatures["CM"] = loadPrecomputedFeatures("CM");
+            additionalPicFeatures["CSD"] = loadPrecomputedFeatures("CSD");
+            additionalPicFeatures["HOG"] = loadPrecomputedFeatures("HOG");
+            additionalPicFeatures["LBP"] = loadPrecomputedFeatures("LBP");
+
+            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["CM"])
+                picFeatures["CM"].Add(item.Key, item.Value);
+            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["CSD"])
+                picFeatures["CSD"].Add(item.Key, item.Value);
+            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["LBP"])
+                picFeatures["LBP"].Add(item.Key, item.Value);
+            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["HOG"])
+                picFeatures["HOG"].Add(item.Key, item.Value);
+        }
+
+        public static Dictionary<string, decimal[]> loadPrecomputedFeatures(string type)
+        {
+            dynamic elements = parseXML(computedTargetPath + @"\features" + type + ".xml");
             Dictionary<string, decimal[]> precomputedFeatures = new Dictionary<string, decimal[]>();
             foreach (var image in elements.image)
             {
                 List<decimal> decimalCollection = new List<decimal>();
                 foreach (var feature in image.feature)
                 {
-                    decimalCollection.Add(Decimal.Parse(feature.value.Replace(".",","), System.Globalization.NumberStyles.Float));
+                    decimalCollection.Add(Decimal.Parse(feature.value.Replace(".", ","), System.Globalization.NumberStyles.Float));
                 }
                 precomputedFeatures.Add(image.id, decimalCollection.ToArray());
             }
-            //picFeatures = precomputedFeatures;
+            return precomputedFeatures;
         }
 
         public static void chooseCSVperMethod(string selectionMethod) {
@@ -707,7 +747,6 @@ namespace Image_Retrieval_Application
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
 
             while (!System.IO.Directory.Exists(projectPath))
             {
@@ -759,7 +798,7 @@ namespace Image_Retrieval_Application
                     //<string, Dictionary<string, int>>
                     loadPrecomputedSearchIndex();
                     loadPrecomputedFileIndex();
-                    loadPrecomputedFeatures();
+                    loadAllPrecomputedFeatures();
                 }
 
 
