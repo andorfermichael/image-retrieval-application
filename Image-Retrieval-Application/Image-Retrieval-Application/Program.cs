@@ -167,15 +167,17 @@ namespace Image_Retrieval_Application
 
         public static List<string> startTagSearch(string searchValue) {
             Debug.WriteLine("Search Value: " + searchValue.ToLower());
-            return getImgPaths(searchFor(searchValue.ToLower()));
+            return getImgPathsForWordSearch(searchFor(searchValue.ToLower()));
         }
 
-        public static List<string> startSimilaritySearch(string searchValue)
-        {
-            // TODO: Replace with real function code
-            Debug.WriteLine("Search Value: " + searchValue.ToLower());
-            return getImgPaths(searchFor(searchValue.ToLower()));
-        }
+        //public static List<string> startSimilaritySearch(Dictionary<string, double> DistancesCollection)
+        //{
+        //    List<string> resultDistancesPath;
+
+        //    resultDistancesPath = getImgPathsForImageSearch(DistancesCollection);   
+            
+        //    return resultDistancesPath;
+        //}
 
 
         public static void startQueryByExampleSearch(string imageLocation)
@@ -364,11 +366,21 @@ namespace Image_Retrieval_Application
 
         }
 
-        private static List<string> getImgPaths(Dictionary<string,int> results)
+        private static List<string> getImgPathsForWordSearch(Dictionary<string,int> results)
         {
             List<string> matchingImages = new List<string>();
             foreach (KeyValuePair<string, int> item in results)
                 matchingImages.Add(fileIndex[item.Key]);
+            return matchingImages;
+        }
+
+        private static List<string> getImgPathsForImageSearch(Dictionary<string, double> results)
+        {
+            List<string> matchingImages = new List<string>();
+            foreach (var item in results)
+            {
+                matchingImages.Add(fileIndex[item.Key]);
+            }
             return matchingImages;
         }
 
@@ -446,13 +458,14 @@ namespace Image_Retrieval_Application
             return root;
         }
 
-        public static Dictionary<string, double> computeDistance(Dictionary<string, decimal[]> resultFeatures)  {                 
+        public static Dictionary<string, double> computeDistance(string imgID, Dictionary<string, decimal[]> FeatureCollection)  {                 
+                       
             //Extract features for SearchedImage
-            decimal[] searchedImageFeatures = resultFeatures["135114980"];
+            decimal[] searchedImageFeatures = FeatureCollection["135114980"]; //should be imgID
             Dictionary<string, double> resultDistances = new Dictionary<string, double>();     
 
 			// Calculate Image Similarities
-            foreach (var item in resultFeatures)
+            foreach (var item in FeatureCollection)
             {
                 double dist = Distance.Cosine(Array.ConvertAll(searchedImageFeatures, x => (double)x), Array.ConvertAll(item.Value, x => (double)x));
                 //Console.WriteLine(dist.ToString());
@@ -460,8 +473,7 @@ namespace Image_Retrieval_Application
                 resultDistances.Add(item.Key, dist);
             }
 
-            return resultDistances.OrderBy(key => key.Value).ToDictionary(key => key.Key, key => key.Value);
- 
+            return resultDistances.OrderBy(key => key.Value).Take(10).ToDictionary(key => key.Key, key => key.Value);
         }
 
         public static void initiateComputation()
@@ -606,7 +618,19 @@ namespace Image_Retrieval_Application
 
 
             }
-   
+
+
+            Dictionary<string, double> resultDistances = computeDistance("REAL ID HERE", features);
+
+            //startSimilaritySearch(resultDistances);
+
+            List<string> test = getImgPathsForImageSearch(resultDistances);
+
+            for (int i = 0; i < test.Count; i++)
+            {
+                Console.WriteLine(test[i]);
+            }
+
             Console.WriteLine("Press Enter to continue:");
             Console.ReadLine();
             //printIndex();
