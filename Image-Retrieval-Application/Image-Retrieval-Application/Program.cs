@@ -677,20 +677,38 @@ namespace Image_Retrieval_Application
             fileIndex = precomputedFileIndex;
         }
 
-        public static void loadPrecomputedFeatures()
+        public static void loadAllPrecomputedFeatures()
         {
-            dynamic elements = parseXML(computedTargetPath + @"\features.xml");
+            Dictionary<string, Dictionary<string, decimal[]>> additionalPicFeatures = new Dictionary<string, Dictionary<string, decimal[]>>();
+            additionalPicFeatures["CM"] = loadPrecomputedFeatures("CM");
+            additionalPicFeatures["CSD"] = loadPrecomputedFeatures("CSD");
+            additionalPicFeatures["HOG"] = loadPrecomputedFeatures("HOG");
+            additionalPicFeatures["LBP"] = loadPrecomputedFeatures("LBP");
+
+            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["CM"])
+                picFeatures["CM"].Add(item.Key, item.Value);
+            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["CSD"])
+                picFeatures["CSD"].Add(item.Key, item.Value);
+            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["LBP"])
+                picFeatures["LBP"].Add(item.Key, item.Value);
+            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["HOG"])
+                picFeatures["HOG"].Add(item.Key, item.Value);
+        }
+
+        public static Dictionary<string, decimal[]> loadPrecomputedFeatures(string type)
+        {
+            dynamic elements = parseXML(computedTargetPath + @"\features" + type + ".xml");
             Dictionary<string, decimal[]> precomputedFeatures = new Dictionary<string, decimal[]>();
             foreach (var image in elements.image)
             {
                 List<decimal> decimalCollection = new List<decimal>();
                 foreach (var feature in image.feature)
                 {
-                    decimalCollection.Add(Decimal.Parse(feature.value.Replace(".",","), System.Globalization.NumberStyles.Float));
+                    decimalCollection.Add(Decimal.Parse(feature.value.Replace(".", ","), System.Globalization.NumberStyles.Float));
                 }
                 precomputedFeatures.Add(image.id, decimalCollection.ToArray());
             }
-            //picFeatures = precomputedFeatures;
+            return precomputedFeatures;
         }
 
         /// <summary>
@@ -752,7 +770,7 @@ namespace Image_Retrieval_Application
                     //<string, Dictionary<string, int>>
                     loadPrecomputedSearchIndex();
                     loadPrecomputedFileIndex();
-                    loadPrecomputedFeatures();
+                    loadAllPrecomputedFeatures();
                 }
 
 
