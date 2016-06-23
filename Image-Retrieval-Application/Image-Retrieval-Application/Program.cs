@@ -159,28 +159,7 @@ namespace Image_Retrieval_Application
         public static Dictionary<string, string> fileIndex = new Dictionary<string, string>();
         public static Dictionary<string, double[]> picFeatures = new Dictionary<string, double[]>();
 
-
-
-        /*//TODO
-        picfeature dictionary erstellen (key: id (52134234) value: featurestring)
-         *xml erstellen speichern (schauen dass zuerst ein ordner korrekt gexmlt is dann für alle ausführen
-         *? wie korrekt auslesen is nicos function verwendbar dafür
-         *selbe mit searchIndex (überprüfen if index bereits exisitert wenn ja dann nicht neu erstellen!!!! sonst schon erstellen)
-         *
-         * Distance über alle bilder berechnen ( im imagefeature die berechnung ausdoa)
-         * 
-         *
-         * 
-         *Hint: Wenn Bildname doppelt zweiteres ignorieren und weiter mit nächstem (try catch block)
-         * 
-         * result with drawResult von Nico :D
-         * 
-        
-
-         
-         */ 
-
-        //                          /GLOBAL VARIABLES
+        //GLOBAL VARIABLES
 
         // TODO: In production replace switch from solutionDirectory to applicationDirectory
         //string applicationDirectory = Path.GetDirectoryName("../../" + Application.ExecutablePath);
@@ -190,6 +169,14 @@ namespace Image_Retrieval_Application
             Debug.WriteLine("Search Value: " + searchValue.ToLower());
             return getImgPaths(searchFor(searchValue.ToLower()));
         }
+
+        public static List<string> startSimilaritySearch(string searchValue)
+        {
+            // TODO: Replace with real function code
+            Debug.WriteLine("Search Value: " + searchValue.ToLower());
+            return getImgPaths(searchFor(searchValue.ToLower()));
+        }
+
 
         public static void startQueryByExampleSearch(string imageLocation)
         {
@@ -242,10 +229,9 @@ namespace Image_Retrieval_Application
                         decimal[] featuresPerLine = new decimal[values.Length - 1];
 
                         for (int j = 1; j < values.Length; j++)
-                        {
-                        
+                        {   
                             featuresPerLine[j-1] = Decimal.Parse((values[j].Replace(".", ",")), System.Globalization.NumberStyles.Float);
-                            Console.WriteLine((featuresPerLine[j-1]));
+                            //Console.WriteLine((featuresPerLine[j-1]));
                         }
                         try
                         {
@@ -426,13 +412,13 @@ namespace Image_Retrieval_Application
         private static XElement generateSearchIndexXML(Dictionary<string, Dictionary<string, int>> index)
         {
             XElement root = new XElement("root");
-            foreach (KeyValuePair<string, Dictionary<string,int>> entry in index)
+            foreach (KeyValuePair<string, Dictionary<string, int>> entry in index)
             {
                 XElement keyword = new XElement("keyword");
                 XAttribute value = new XAttribute("value", entry.Key);
                 keyword.Add(value);
 
-                foreach (KeyValuePair<string,int> subentry in entry.Value.OrderByDescending(key => key.Value))
+                foreach (KeyValuePair<string, int> subentry in entry.Value.OrderByDescending(key => key.Value))
                 {
                     XElement image = new XElement("image");
                     XAttribute id = new XAttribute("id", subentry.Key);
@@ -444,6 +430,24 @@ namespace Image_Retrieval_Application
                 root.Add(keyword);
             }
             return root;
+        }
+
+        public static Dictionary<string, double> computeDistance(Dictionary<string, decimal[]> resultFeatures)  {                 
+            //Extract features for SearchedImage
+            decimal[] searchedImageFeatures = resultFeatures["135114980"];
+            Dictionary<string, double> resultDistances = new Dictionary<string, double>();     
+
+			// Calculate Image Similarities
+            foreach (var item in resultFeatures)
+            {
+                double dist = Distance.Cosine(Array.ConvertAll(searchedImageFeatures, x => (double)x), Array.ConvertAll(item.Value, x => (double)x));
+                //Console.WriteLine(dist.ToString());
+                //Console.WriteLine(item.Key);
+                resultDistances.Add(item.Key, dist);
+            }
+
+            return resultDistances.OrderBy(key => key.Value).ToDictionary(key => key.Key, key => key.Value);
+ 
         }
 
 
@@ -473,6 +477,10 @@ namespace Image_Retrieval_Application
 
             while (xmlFiles.Count == 0 || csvFiles.Count == 0)
             {
+                List<String> imgSubDirectories = getSubDirectories(imgDirectory);
+                List<String> xmlFiles = genXmlFilepaths(imgSubDirectories);
+                List<String> csvFiles = genCSVFilepaths(imgSubDirectories);
+           
                 try
                 {
                     imgSubDirectories = getSubDirectories(projectPath + @"\img");
@@ -510,21 +518,20 @@ namespace Image_Retrieval_Application
                     addItemToIndex(photo);
                 }
             }
-            // searchIndex in xml speichern:
-
-
+            Console.WriteLine("\n\n### Index creation successful! ###\n\n");
             if (!System.IO.Directory.Exists(computedTargetPath))
             {
                 System.IO.Directory.CreateDirectory(computedTargetPath);
             }
             
             generateSearchIndexXML(searchIndex).Save(computedTargetPath + @"\searchIndex.xml");
+            Console.WriteLine("\n\n### Index saved to {0} ###\n\n", computedTargetPath + @"\searchIndex.xml");
 
-
+            Console.WriteLine("\n\n### Extracting Featurepoints ###\n\n");
             Dictionary<string, decimal[]> features = saveFeaturesFromCSV(csvFiles);
             generateFeaturePointsXML(features).Save(computedTargetPath + @"\features.xml");
-
-            Console.WriteLine("\n\n### Index creation successful! ###\n\n");
+            Console.WriteLine("\n\n### Saved Featurepoints to {0} ###\n\n", computedTargetPath + @"\features.xml");
+   
             Console.WriteLine("Press Enter to continue:");
             Console.ReadLine();
             //printIndex();
