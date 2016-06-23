@@ -720,29 +720,6 @@ namespace Image_Retrieval_Application
             return precomputedFeatures;
         }
 
-        public static void chooseCSVperMethod(string selectionMethod) {
-          
-            switch (selectionMethod)
-            {
-                case "CM":
-                    Console.WriteLine("Case 1");
-                    break;
-                case "CSD":
-                    Console.WriteLine("Case 2");
-                    break;
-                case "HOG":
-                    Console.WriteLine("Case 2");
-                    break;
-                case "LBP":
-                    Console.WriteLine("Case 2");
-                    break;
-                default:
-                    //Console.WriteLine("Default case");
-                    break;
-            }
-        
-        }
-
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
