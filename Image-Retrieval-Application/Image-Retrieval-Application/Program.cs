@@ -229,18 +229,21 @@ namespace Image_Retrieval_Application
                         string[] values = line.Split(',');
                         decimal[] featuresPerLine = new decimal[values.Length - 1];
 
-                        for (int j = 1; j < values.Length; j++)
-                        {   
-                            featuresPerLine[j-1] = Decimal.Parse(values[j].Replace(".", ","), System.Globalization.NumberStyles.Float);
-                            //Console.WriteLine((featuresPerLine[j-1]));
-                        }
-                        try
+                        if (fileIndex.ContainsKey(values[0]))
                         {
-                            resultFeatures.Add(values[0], featuresPerLine);
-                        }
-                        catch (ArgumentException)
-                        {
-                            Console.WriteLine("Entry skipped");
+                            for (int j = 1; j < values.Length; j++)
+                            {
+                                featuresPerLine[j - 1] = Decimal.Parse(values[j].Replace(".", ","), System.Globalization.NumberStyles.Float);
+                                //Console.WriteLine((featuresPerLine[j-1]));
+                            }
+                            try
+                            {
+                                resultFeatures.Add(values[0], featuresPerLine);
+                            }
+                            catch (ArgumentException)
+                            {
+                                Console.WriteLine("Entry skipped");
+                            }
                         }
                     }
                 }
