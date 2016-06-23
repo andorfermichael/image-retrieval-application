@@ -649,13 +649,51 @@ namespace Image_Retrieval_Application
             additionalPicFeatures.Add("HOG", saveFeaturesFromCSV(csvFilesHOG));
 
             foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["CM"])
-                picFeatures["CM"].Add(item.Key, item.Value);
+            {
+                try
+                {
+                    picFeatures["CM"].Add(item.Key, item.Value);
+                }
+                catch (ArgumentException)
+                {
+                    Console.WriteLine("Picture already processed");
+                }
+            }
+
             foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["CSD"])
-                picFeatures["CSD"].Add(item.Key, item.Value);
-            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["LBP"])
-                picFeatures["LBP"].Add(item.Key, item.Value);
-            foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["HOG"])
-                picFeatures["HOG"].Add(item.Key, item.Value);
+            {
+                try
+                {
+                    picFeatures["CSD"].Add(item.Key, item.Value);
+                }
+                catch (ArgumentException)
+                {
+                    Console.WriteLine("Picture already processed");
+                }
+            }
+                
+                foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["LBP"])
+                {
+                    try
+                    {
+                        picFeatures["LBP"].Add(item.Key, item.Value);
+                    }
+                    catch (ArgumentException)
+                    {
+                        Console.WriteLine("Picture already processed");
+                    }
+                }
+                foreach (KeyValuePair<string, decimal[]> item in additionalPicFeatures["HOG"])
+                {
+                    try
+                    {
+                        picFeatures["HOG"].Add(item.Key, item.Value);
+                    }
+                    catch (ArgumentException)
+                    {
+                        Console.WriteLine("Picture already processed");
+                    }
+                }
 
             generateFeaturePointsXML(picFeatures["CM"]).Save(computedTargetPath + @"\featuresCM.xml");
             generateFeaturePointsXML(picFeatures["CSD"]).Save(computedTargetPath + @"\featuresCSD.xml");
