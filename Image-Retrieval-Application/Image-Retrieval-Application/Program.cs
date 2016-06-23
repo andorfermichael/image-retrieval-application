@@ -171,12 +171,19 @@ namespace Image_Retrieval_Application
             return getImgPaths(searchFor(searchValue.ToLower()));
         }
 
-        public static List<string> startSimilaritySearch(string searchValue)
-        {
-            // TODO: Replace with real function code
-            Debug.WriteLine("Search Value: " + searchValue.ToLower());
-            return getImgPaths(searchFor(searchValue.ToLower()));
-        }
+        //public static List<string> startSimilaritySearch(Dictionary<string, double> resultDistances)
+        //{
+        //    List<string> resultDistancesPath;
+
+        //    for (int i = 0; i < resultDistances.Count; i++)
+        //    {
+        //        resultDistancesPath.Add = getImgPaths(searchValue.ToLower());
+        //    }
+
+        //    // TODO: Replace with real function code
+        //    Debug.WriteLine("Search Value: " + searchValue.ToLower());
+        //    return getImgPaths(searchFor(searchValue.ToLower()));
+        //}
 
 
         public static void startQueryByExampleSearch(string imageLocation)
@@ -473,8 +480,11 @@ namespace Image_Retrieval_Application
             //    }
             //}
 
-            computeDistance(saveFeaturesFromCSV(csvFiles));
-            
+            Dictionary<string, double> resultDistances = computeDistance(saveFeaturesFromCSV(csvFiles));
+
+            //startSimilaritySearch(resultDistances);
+
+
             Console.WriteLine("\n\n### Index creation successful! ###\n\n");
             Console.WriteLine("Press Enter to continue:");
             Console.ReadLine();
