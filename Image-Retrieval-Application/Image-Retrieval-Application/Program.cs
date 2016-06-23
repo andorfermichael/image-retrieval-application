@@ -159,28 +159,7 @@ namespace Image_Retrieval_Application
         public static Dictionary<string, string> fileIndex = new Dictionary<string, string>();
         public static Dictionary<string, double[]> picFeatures = new Dictionary<string, double[]>();
 
-
-
-        /*//TODO
-        picfeature dictionary erstellen (key: id (52134234) value: featurestring)
-         *xml erstellen speichern (schauen dass zuerst ein ordner korrekt gexmlt is dann für alle ausführen
-         *? wie korrekt auslesen is nicos function verwendbar dafür
-         *selbe mit searchIndex (überprüfen if index bereits exisitert wenn ja dann nicht neu erstellen!!!! sonst schon erstellen)
-         *
-         * Distance über alle bilder berechnen ( im imagefeature die berechnung ausdoa)
-         * 
-         *
-         * 
-         *Hint: Wenn Bildname doppelt zweiteres ignorieren und weiter mit nächstem (try catch block)
-         * 
-         * result with drawResult von Nico :D
-         * 
-        
-
-         
-         */ 
-
-        //                          /GLOBAL VARIABLES
+        //GLOBAL VARIABLES
 
         // TODO: In production replace switch from solutionDirectory to applicationDirectory
         //string applicationDirectory = Path.GetDirectoryName("../../" + Application.ExecutablePath);
@@ -244,10 +223,9 @@ namespace Image_Retrieval_Application
                         decimal[] featuresPerLine = new decimal[values.Length - 1];
 
                         for (int j = 1; j < values.Length; j++)
-                        {
-                        
+                        {   
                             featuresPerLine[j-1] = Decimal.Parse((values[j].Replace(".", ",")), System.Globalization.NumberStyles.Float);
-                            Console.WriteLine((featuresPerLine[j-1]));
+                            //Console.WriteLine((featuresPerLine[j-1]));
                         }
                         try
                         {
@@ -453,7 +431,6 @@ namespace Image_Retrieval_Application
             List<String> csvFiles = genCSVFilepaths(imgSubDirectories);
            
            
-
             while (xmlFiles.Count == 0)
             {
                 try
@@ -477,14 +454,14 @@ namespace Image_Retrieval_Application
             Console.WriteLine("### Parsing XML-File(s) ###\n");
 
             Console.WriteLine("### Creating Index (this can take a while) ####");
-            //foreach (string file in xmlFiles)
-            //{
-            //    dynamic elements = parseXML(file);
-            //    foreach (var photo in elements.photo)
-            //    {
-            //        addItemToIndex(photo);
-            //    }
-            //}
+            foreach (string file in xmlFiles)
+            {
+                dynamic elements = parseXML(file);
+                foreach (var photo in elements.photo)
+                {
+                    addItemToIndex(photo);
+                }
+            }
 
             saveFeaturesFromCSV(csvFiles);
 
