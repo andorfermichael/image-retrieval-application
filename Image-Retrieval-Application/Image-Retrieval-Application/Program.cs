@@ -761,7 +761,7 @@ namespace Image_Retrieval_Application
                 string option = Console.ReadLine();
                 if (option == "yes")
                 {
-                    //readTestsetAndCompute();
+                    readTestsetAndCompute();
                 }
             }
             else if (System.IO.File.Exists(computedTargetPath + @"\featuresCM.xml") && System.IO.File.Exists(computedTargetPath + @"\featuresCSD.xml") && System.IO.File.Exists(computedTargetPath + @"\featuresHOG.xml") && System.IO.File.Exists(computedTargetPath + @"\featuresLBP.xml") && System.IO.File.Exists(computedTargetPath + @"\searchIndex.xml") && System.IO.File.Exists(computedTargetPath + @"\fileIndex.xml"))
@@ -783,7 +783,7 @@ namespace Image_Retrieval_Application
                     readDevsetAndCompute();
                     if (option2 == "yes")
                     {
-                        //readTestsetAndCompute();
+                        readTestsetAndCompute();
                     }
                 }
                 else
