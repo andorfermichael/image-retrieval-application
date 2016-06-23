@@ -80,7 +80,7 @@ namespace Image_Retrieval_Application
             //List<string> imagePaths = Program.retrieveSimilarImages(imageID, selectedOption);
 
             // Insert similar images into modal
-            insertSimilarImagesIntoModal(imagePaths);
+            //insertSimilarImagesIntoModal(imagePaths);
 
             // Open modal window
             HtmlDocument doc = webbrowser.Document;
