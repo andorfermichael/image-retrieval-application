@@ -157,7 +157,7 @@ namespace Image_Retrieval_Application
         };
         public static Dictionary<string, Dictionary<string, int>> searchIndex = new Dictionary<string, Dictionary<string, int>>(); //TODO searchINdex auch xmln
         public static Dictionary<string, string> fileIndex = new Dictionary<string, string>();
-        public static Dictionary<string, decimal[]> picFeatures = new Dictionary<string, decimal[]>();
+        public static Dictionary<string, Dictionary<string, decimal[]>> picFeatures = new Dictionary<string, Dictionary<string, decimal[]>>();
 
         //GLOBAL VARIABLES
 
@@ -211,14 +211,14 @@ namespace Image_Retrieval_Application
             return xmlFilepaths;
         }
 
-        private static List<String> genCSVFilepaths(List<String> imgSubDirectories)
+        private static List<String> genCSVFilepaths(List<String> imgSubDirectories, string pattern)
         {
             List<String> csvFilepaths = new List<string>();
             foreach (string item in imgSubDirectories)
             {
                 // WARNING, this is only valid if Folders are named "img" and "xml" (Length of 3 characters)
                 //string tmp = item.Substring(item.IndexOf("img/"));
-                csvFilepaths.Add(item.Replace(@"\img\", @"\descvis\descvis\img\") + " CM.csv");
+                csvFilepaths.Add(item.Replace(@"\img\", @"\descvis\descvis\img\") + " " + pattern + ".csv");
             }
             return csvFilepaths;
         }
@@ -239,7 +239,7 @@ namespace Image_Retrieval_Application
 
                         for (int j = 1; j < values.Length; j++)
                         {   
-                            featuresPerLine[j-1] = Decimal.Parse((values[j].Replace(".", ",")), System.Globalization.NumberStyles.Float);
+                            featuresPerLine[j-1] = Decimal.Parse(values[j].Replace(".", ","), System.Globalization.NumberStyles.Float);
                             //Console.WriteLine((featuresPerLine[j-1]));
                         }
                         try
@@ -489,15 +489,21 @@ namespace Image_Retrieval_Application
 
             List<String> imgSubDirectories = new List<string>();
             List<String> xmlFiles = new List<string>();
-            List<String> csvFiles = new List<string>();
+            List<String> csvFilesCM = new List<string>();
+            List<String> csvFilesCSD = new List<string>();
+            List<String> csvFilesLPB = new List<string>();
+            List<String> csvFilesHOG = new List<string>();
 
-            while (xmlFiles.Count == 0 || csvFiles.Count == 0)
+            while (xmlFiles.Count == 0 || csvFilesCM.Count == 0 || csvFilesCSD.Count == 0 || csvFilesLPB.Count == 0 || csvFilesHOG.Count == 0)
             {
                 try
                 {
                     imgSubDirectories = getSubDirectories(projectPath + @"\img");
                     xmlFiles = genXmlFilepaths(imgSubDirectories);
-                    csvFiles = genCSVFilepaths(imgSubDirectories);
+                    csvFilesCM = genCSVFilepaths(imgSubDirectories, "CM");
+                    csvFilesCSD = genCSVFilepaths(imgSubDirectories, "CSD");
+                    csvFilesLPB = genCSVFilepaths(imgSubDirectories, "LPB");
+                    csvFilesHOG = genCSVFilepaths(imgSubDirectories, "HOG");
                     computedTargetPath = projectPath + @"\computed\";
                 }
                 catch (Exception)
@@ -515,7 +521,10 @@ namespace Image_Retrieval_Application
                     computedTargetPath = projectPath + @"\computed\";
                     imgSubDirectories = getSubDirectories(newProjectPath + @"img");
                     xmlFiles = genXmlFilepaths(imgSubDirectories);
-                    csvFiles = genCSVFilepaths(imgSubDirectories);
+                    csvFilesCM = genCSVFilepaths(imgSubDirectories, "CM");
+                    csvFilesCSD = genCSVFilepaths(imgSubDirectories, "CSD");
+                    csvFilesLPB = genCSVFilepaths(imgSubDirectories, "LPB");
+                    csvFilesHOG = genCSVFilepaths(imgSubDirectories, "HOG");
                 }
             }
 
@@ -541,8 +550,27 @@ namespace Image_Retrieval_Application
             Console.WriteLine("\n\n### Index saved to {0} ###\n\n", computedTargetPath + @"\searchIndex.xml");
 
             Console.WriteLine("\n\n### Extracting Featurepoints ###\n\n");
-            picFeatures = saveFeaturesFromCSV(csvFiles);
-            generateFeaturePointsXML(picFeatures).Save(computedTargetPath + @"\features.xml");
+
+
+            picFeatures.Add("CM", saveFeaturesFromCSV(csvFilesCM));
+            generateFeaturePointsXML(picFeatures["CM"]).Save(computedTargetPath + @"\featuresCM.xml");
+
+
+            picFeatures.Add("CSD", saveFeaturesFromCSV(csvFilesCSD));
+            generateFeaturePointsXML(picFeatures["CSD"]).Save(computedTargetPath + @"\featuresCSD.xml");
+
+
+    
+            picFeatures.Add("LPB", saveFeaturesFromCSV(csvFilesLPB));
+            generateFeaturePointsXML(picFeatures["LPB"]).Save(computedTargetPath + @"\featuresLPB.xml");
+
+
+            picFeatures.Add("HOG", saveFeaturesFromCSV(csvFilesHOG));
+            generateFeaturePointsXML(picFeatures["HOG"]).Save(computedTargetPath + @"\featuresHOG.xml");
+
+
+
+            //OLD: generateFeaturePointsXML(picFeatures).Save(computedTargetPath + @"\features.xml");
             Console.WriteLine("\n\n### Saved Featurepoints to {0} ###\n\n", computedTargetPath + @"\features.xml");
         }
 
@@ -571,6 +599,22 @@ namespace Image_Retrieval_Application
                 precomputedFileIndex.Add(image.id, image.path);
             }
             fileIndex = precomputedFileIndex;
+        }
+
+        public static void loadPrecomputedFeatures()
+        {
+            dynamic elements = parseXML(computedTargetPath + @"\features.xml");
+            Dictionary<string, decimal[]> precomputedFeatures = new Dictionary<string, decimal[]>();
+            foreach (var image in elements.image)
+            {
+                List<decimal> decimalCollection = new List<decimal>();
+                foreach (var feature in image.feature)
+                {
+                    decimalCollection.Add(Decimal.Parse(feature.value.Replace(".",","), System.Globalization.NumberStyles.Float));
+                }
+                precomputedFeatures.Add(image.id, decimalCollection.ToArray());
+            }
+            //picFeatures = precomputedFeatures;
         }
 
         /// <summary>
@@ -621,6 +665,7 @@ namespace Image_Retrieval_Application
                     //<string, Dictionary<string, int>>
                     loadPrecomputedSearchIndex();
                     loadPrecomputedFileIndex();
+                    loadPrecomputedFeatures();
                 }
 
 
