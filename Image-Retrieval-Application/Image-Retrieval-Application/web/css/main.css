@@ -25,6 +25,24 @@ img:hover {
   padding-top: 8px;
 }
 
+.modal-title {
+	text-align: center;
+}
+
+#modal-body {
+	margin: auto;
+	text-align: center;
+}
+
+#modal-body img {
+	margin-bottom: 20px;
+}
+
+#modal-body img:first-child {
+	border: 10px red solid;
+}
+
+
 
 
 

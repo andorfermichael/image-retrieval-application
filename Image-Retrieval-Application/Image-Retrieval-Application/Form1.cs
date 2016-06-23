@@ -64,6 +64,10 @@ namespace Image_Retrieval_Application
             Point BrowserCoord = webbrowser.PointToClient(ScreenCoord);
             HtmlElement elem = webbrowser.Document.GetElementFromPoint(BrowserCoord);
 
+            // Clear modal body
+            HtmlElement modalBody = webbrowser.Document.GetElementById("modal-body");
+            modalBody.InnerHtml = "";
+
             long imageID = Convert.ToInt64(Path.GetFileName(elem.GetAttribute("src")).Replace(".jpg", ""));
             string selectedOption = "";
 
