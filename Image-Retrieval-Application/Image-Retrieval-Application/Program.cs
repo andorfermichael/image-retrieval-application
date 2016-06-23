@@ -6,6 +6,11 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
+using System.Collections;
+using System.Xml.Serialization;
+using System.Xml;
+//using System.IO.Stream;
+
 using System.Data.Entity.Design.PluralizationServices;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -139,8 +144,8 @@ namespace Image_Retrieval_Application
         internal static readonly DirectoryInfo INDEX_DIR = new DirectoryInfo("index");
 
         //GLOBAL VARIABLES:
-        public static string imgDirectory = @"C:\Users\Nico\Downloads\img";
-        public static string xmlDirectory = @"C:\Users\Nico\Downloads\xml";
+        public static string imgDirectory = @"D:\0MMT\Digital Media Systems\Übung 3 Projekt\MMEval div400 sets\devset\img";
+        public static string xmlDirectory = @"D:\0MMT\Digital Media Systems\Übung 3 Projekt\MMEval div400 sets\devset\xml";
         public static List<String> stopWords = new List<String> { "able", "about", "above", "abroad", "according", "accordingly", "across", "actually", "adj", "after", "again", "afterwards", "against", "ago", "ahead", "ain't", "all", "allow", "allows", "almost", "alone", "along", "alongside", "already", "also", "although", "always", "am", "amid", "amidst", "among", "amongst", "an", "and", "another", "any", "anybody", "anyhow", "anyone", "anything", "anyway", "anyways", "anywhere", "apart", "appear", "appreciate", "appropriate", "are", "aren't", "around", "as", "a's", "aside", "ask", "asking", "associated", "at", "available", "away", "awfully", "back", "backward", "backwards", "be", "became", "because", "become", "becomes", "becoming", "been", "before", "beforehand", "begin", "behind", "being", "believe", "below", "beside", "besides", "best", "better", "between", "beyond", "both", "brief", "but", "by", "came", "can", "cannot", "cant", "can't", "caption", "cause", "causes", "certain", "certainly", "changes", "clearly", "c'mon", "co", "co.", "com", "come", "comes", "concerning", "consequently", "consider", "considering", "contain", "containing", "contains", "corresponding", "could", "couldn't", "course", "c's", "currently", "dare", "daren't", "definitely", "described", "despite", "did", "didn't", "different", "directly", "do", "does", "doesn't", "doing", "done", "don't", "down", "downwards", "during", "each", "edu", "eg", "eight", "eighty", "either", "else", "elsewhere", "end", "ending", "enough", "entirely", "especially", "et", "etc", "even", "ever", "evermore", "every", "everybody", "everyone", "everything", "everywhere", "ex", "exactly", "example", "except", "fairly", "far", "farther", "few", "fewer", "fifth", "first", "five", "followed", "following", "follows", "for", "forever", "former", "formerly", "forth", "forward", "found", "four", "from", "further", "furthermore", "get", "gets", "getting", "given", "gives", "go", "goes", "going", "gone", "got", "gotten", "greetings", "had", "hadn't", "half", "happens", "hardly", "has", "hasn't", "have", "haven't", "having", "he", "he'd", "he'll", "hello", "help", "hence", "her", "here", "hereafter", "hereby", "herein", "here's", "hereupon", "hers", "herself", "he's", "hi", "him", "himself", "his", "hither", "hopefully", "how", "howbeit", "however", "hundred", "i'd", "ie", "if", "ignored", "i'll", "i'm", "immediate", "in", "inasmuch", "inc", "inc.", "indeed", "indicate", "indicated", "indicates", "inner", "inside", "insofar", "instead", "into", "inward", "is", "isn't", "it", "it'd", "it'll", "its", "it's", "itself", "i've", "just", "k", "keep", "keeps", "kept", "know", "known", "knows", "last", "lately", "later", "latter", "latterly", "least", "less", "lest", "let", "let's", "like", "liked", "likely", "likewise", "little", "look", "looking", "looks", "low", "lower", "ltd", "made", "mainly", "make", "makes", "many", "may", "maybe", "mayn't", "me", "mean", "meantime", "meanwhile", "merely", "might", "mightn't", "mine", "minus", "miss", "more", "moreover", "most", "mostly", "mr", "mrs", "much", "must", "mustn't", "my", "myself", "name", "namely", "nd", "near", "nearly", "necessary", "need", "needn't", "needs", "neither", "never", "neverf", "neverless", "nevertheless", "new", "next", "nine", "ninety", "no", "nobody", "non", "none", "nonetheless", "noone", "no-one", "nor", "normally", "not", "nothing", "notwithstanding", "novel", "now", "nowhere", "obviously", "of", "off", "often", "oh", "ok", "okay", "old", "on", "once", "one", "ones", "one's", "only", "onto", "opposite", "or", "other", "others", "otherwise", "ought", "oughtn't", "our", "ours", "ourselves", "out", "outside", "over", "overall", "own", "particular", "particularly", "past", "per", "perhaps", "placed", "please", "plus", "possible", "presumably", "probably", "provided", "provides", "que", "quite", "qv", "rather", "rd", "re", "really", "reasonably", "recent", "recently", "regarding", "regardless", "regards", "relatively", "respectively", "right", "round", "said", "same", "saw", "say", "saying", "says", "second", "secondly", "see", "seeing", "seem", "seemed", "seeming", "seems", "seen", "self", "selves", "sensible", "sent", "serious", "seriously", "seven", "several", "shall", "shan't", "she", "she'd", "she'll", "she's", "should", "shouldn't", "since", "six", "so", "some", "somebody", "someday", "somehow", "someone", "something", "sometime", "sometimes", "somewhat", "somewhere", "soon", "sorry", "specified", "specify", "specifying", "still", "sub", "such", "sup", "sure", "take", "taken", "taking", "tell", "tends", "th", "than", "thank", "thanks", "thanx", "that", "that'll", "thats", "that's", "that've", "the", "their", "theirs", "them", "themselves", "then", "thence", "there", "thereafter", "thereby", "there'd", "therefore", "therein", "there'll", "there're", "theres", "there's", "thereupon", "there've", "these", "they", "they'd", "they'll", "they're", "they've", "thing", "things", "think", "third", "thirty", "this", "thorough", "thoroughly", "those", "though", "three", "through", "throughout", "thru", "thus", "till", "to", "together", "too", "took", "toward", "towards", "tried", "tries", "truly", "try", "trying", "t's", "twice", "two", "un", "under", "underneath", "undoing", "unfortunately", "unless", "unlike", "unlikely", "until", "unto", "up", "upon", "upwards", "us", "use", "used", "useful", "uses", "using", "usually", "v", "value", "various", "versus", "very", "via", "viz", "vs", "want", "wants", "was", "wasn't", "way", "we", "we'd", "welcome", "well", "we'll", "went", "were", "we're", "weren't", "we've", "what", "whatever", "what'll", "what's", "what've", "when", "whence", "whenever", "where", "whereafter", "whereas", "whereby", "wherein", "where's", "whereupon", "wherever", "whether", "which", "whichever", "while", "whilst", "whither", "who", "who'd", "whoever", "whole", "who'll", "whom", "whomever", "who's", "whose", "why", "will", "willing", "wish", "with", "within", "without", "wonder", "won't", "would", "wouldn't", "yes", "yet", "you", "you'd", "you'll", "your", "you're", "yours", "yourself", "yourselves", "you've", "zero" };
         public static List<String> propertiesToIndex = new List<string> { "date_taken", "description", "tags", "title", "username" };
         public static Dictionary<string, int> weightOfPorperties = new Dictionary<string, int>() {
@@ -150,8 +155,31 @@ namespace Image_Retrieval_Application
             {"title",10 },
             {"username",4 }
         };
-        public static Dictionary<string, Dictionary<dynamic, int>> searchIndex = new Dictionary<string, Dictionary<dynamic, int>>();
+        public static Dictionary<string, Dictionary<dynamic, int>> searchIndex = new Dictionary<string, Dictionary<dynamic, int>>(); //TODO searchINdex auch xmln
         public static Dictionary<string, string> fileIndex = new Dictionary<string, string>();
+        public static Dictionary<string, double[]> picFeatures = new Dictionary<string, double[]>();
+
+
+
+        /*//TODO
+        picfeature dictionary erstellen (key: id (52134234) value: featurestring)
+         *xml erstellen speichern (schauen dass zuerst ein ordner korrekt gexmlt is dann für alle ausführen
+         *? wie korrekt auslesen is nicos function verwendbar dafür
+         *selbe mit searchIndex (überprüfen if index bereits exisitert wenn ja dann nicht neu erstellen!!!! sonst schon erstellen)
+         *
+         * Distance über alle bilder berechnen ( im imagefeature die berechnung ausdoa)
+         * 
+         *
+         * 
+         *Hint: Wenn Bildname doppelt zweiteres ignorieren und weiter mit nächstem (try catch block)
+         * 
+         * result with drawResult von Nico :D
+         * 
+        
+
+         
+         */ 
+
         //                          /GLOBAL VARIABLES
 
         // TODO: In production replace switch from solutionDirectory to applicationDirectory
@@ -188,6 +216,53 @@ namespace Image_Retrieval_Application
             }
             return xmlFilepaths;
         }
+
+        private static List<String> genCSVFilepaths(List<String> imgSubDirectories)
+        {
+            List<String> csvFilepaths = new List<string>();
+            foreach (string item in imgSubDirectories)
+            {
+                // WARNING, this is only valid if Folders are named "img" and "xml" (Length of 3 characters)
+                //string tmp = item.Substring(item.IndexOf("img/"));
+                csvFilepaths.Add(item.Replace(@"\img\", @"\descvis\descvis\img\") + " CM.csv");
+            }
+            return csvFilepaths;
+        }
+
+        private static  Dictionary<string, decimal[]> saveFeaturesFromCSV(List<String>csvFiles)
+        {
+            Dictionary<string, decimal[]> resultFeatures = new Dictionary<string, decimal[]>();
+            for (int i = 0; i < csvFiles.Count; i++)
+			{
+			  var reader = new StreamReader(File.OpenRead(csvFiles[i]));
+              while (!reader.EndOfStream)
+              {
+                    var line = reader.ReadLine();
+                    if (line.Length > 0)
+                    {
+                        string[] values = line.Split(',');
+                        decimal[] featuresPerLine = new decimal[values.Length - 1];
+
+                        for (int j = 1; j < values.Length; j++)
+                        {
+                        
+                            featuresPerLine[j-1] = Decimal.Parse((values[j].Replace(".", ",")), System.Globalization.NumberStyles.Float);
+                            Console.WriteLine((featuresPerLine[j-1]));
+                        }
+                        try
+                        {
+                            resultFeatures.Add(values[0], featuresPerLine);
+                        }
+                        catch (ArgumentException)
+                        {
+                            Console.WriteLine("Entry skipped");
+                        }
+                    }
+                }
+			}
+            return resultFeatures;
+        }
+
 
         private static void addItemToIndex(dynamic Item)
         {
@@ -259,6 +334,9 @@ namespace Image_Retrieval_Application
             {
                 fileIndex.Add(item.id, directory + item.id + ".jpg");
                 //Console.WriteLine(directory + item.id + ".jpg");
+                string picPath = (string) directory + item.id + ".jpg";
+                //Console.WriteLine(picPath);
+                
             }
         }
 
@@ -343,121 +421,21 @@ namespace Image_Retrieval_Application
         }
 
 
-
-        private static void Index()
-        {
-            try
-            {
-                using (var writer = new IndexWriter(FSDirectory.Open(INDEX_DIR), new StandardAnalyzer(Version.LUCENE_30), true, IndexWriter.MaxFieldLength.LIMITED))
-                {
-                    Document doc1 = new Document();
-                    doc1.Add(new Field("name", "doc 1", Field.Store.YES, Field.Index.NO));
-                    doc1.Add(new Field("content", "abc xyz", Field.Store.YES, Field.Index.ANALYZED));
-                    writer.AddDocument(doc1);
-
-                    Document doc2 = new Document();
-                    doc2.Add(new Field("name", "doc 2", Field.Store.YES, Field.Index.NO));
-                    doc2.Add(new Field("content", "abc defg defg defg", Field.Store.YES, Field.Index.ANALYZED));
-                    writer.AddDocument(doc2);
-
-                    Document doc3 = new Document();
-                    doc3.Add(new Field("name", "doc 3", Field.Store.YES, Field.Index.NO));
-                    doc3.Add(new Field("content", "qwerty defg defg", Field.Store.YES, Field.Index.ANALYZED));
-                    writer.AddDocument(doc3);
-
-                    Console.Out.WriteLine("Optimizing...");
-                    writer.Optimize();
-                    writer.Commit();
-                    writer.Dispose();
-
-                }
-            }
-            catch (IOException e)
-            {
-                Console.Out.WriteLine(" caught a " + e.GetType() + "\n with message: " + e.Message);
-            }
-        }
-
-
-        private static void Query()
-        {
-            try
-            {
-                IndexReader reader = IndexReader.Open(FSDirectory.Open(INDEX_DIR), true);
-                Console.Out.WriteLine("Number of indexed docs: " + reader.NumDocs());
-
-                IndexSearcher searcher = new IndexSearcher(FSDirectory.Open(INDEX_DIR));
-                Term searchTerm = new Term("content", "defg");
-                TermQuery query = new TermQuery(searchTerm);
-
-                TopScoreDocCollector topDocColl = TopScoreDocCollector.Create(10, true);
-                searcher.Search(query, topDocColl);
-                TopDocs topDocs = topDocColl.TopDocs();
-                Console.Out.WriteLine("Number of hits: " + topDocs.TotalHits);
-                ScoreDoc[] docarray = topDocs.ScoreDocs;
-
-                for (int i = 0; i < docarray.Length; i++)
-                {
-                    Console.Out.WriteLine((i + 1) + ". " + (searcher.Doc(docarray[i].Doc)).GetField("name").StringValue);
-                }
-
-            }
-            catch (IOException e)
-            {
-                Console.Out.WriteLine(" caught a " + e.GetType() + "\n with message: " + e.Message);
-            }
-
-        }
-
-
-        private static void ImageFeatures()
-        {
-            Dictionary<string, Bitmap> testImages = new Dictionary<string, Bitmap>();
-
-            testImages.Add("img_acropolis", (Bitmap)Bitmap.FromFile("test_imgs/acropolis_athens.jpg"));
-            testImages.Add("img_cathedral", (Bitmap)Bitmap.FromFile("test_imgs/amiens_cathedral.jpg"));
-            testImages.Add("img_bigben", (Bitmap)Bitmap.FromFile("test_imgs/big_ben.jpg"));
-
-            int numberOfWords = 6; // number of cluster centers: typically >>100
-
-            // Create a Binary-Split clustering algorithm
-            BinarySplit binarySplit = new BinarySplit(numberOfWords);
-
-            IBagOfWords<Bitmap> bow;
-            // Create bag-of-words (BoW) with the given algorithm
-            BagOfVisualWords surfBow = new BagOfVisualWords(binarySplit);
-
-            // Compute the BoW codebook using training images only
-            Bitmap[] bmps = new Bitmap[testImages.Count];
-            testImages.Values.CopyTo(bmps, 0);
-            surfBow.Compute(bmps);
-            bow = surfBow; 	// this model needs to be saved once it is calculated: only compute it once to calculate features 
-            // from the collection as well as for new queries.
-            // THE SAME TRAINED MODEL MUST BE USED TO GET THE SAME FEATURES!!!
-
-            Dictionary<string, double[]> testImageFeatures = new Dictionary<string, double[]>();
-
-            // Extract features for all images
-            foreach (string imagename in testImages.Keys)
-            {
-                double[] featureVector = bow.GetFeatureVector(testImages[imagename]);
-                testImageFeatures.Add(imagename, featureVector);
-                Console.Out.WriteLine(imagename + " features: " + featureVector.ToString(DefaultArrayFormatProvider.InvariantCulture));
-            }
-            // Calculate Image Similarities
-            string[] imagenames = new string[testImageFeatures.Keys.Count];
-            testImageFeatures.Keys.CopyTo(imagenames, 0);
-            for (int i = 0; i < imagenames.Length; i++)
-            {
-                for (int j = i + 1; j < imagenames.Length; j++)
-                {
-                    double dist = Distance.Cosine(testImageFeatures[imagenames[i]], testImageFeatures[imagenames[j]]);
-                    Console.Out.WriteLine(imagenames[i] + " <-> " + imagenames[j] + " distance: " + dist.ToString());
-                }
-            }
-        }
-
-
+        //TODO Distance
+        //public static void function computeDistance() {
+    
+                //// Calculate Image Similarities
+            //string[] imagenames = new string[testImageFeatures.Keys.Count];
+            //testImageFeatures.Keys.CopyTo(imagenames, 0);
+            //for (int i = 0; i < imagenames.Length; i++)
+            //{
+            //    for (int j = i + 1; j < imagenames.Length; j++)
+            //    {
+            //        double dist = Distance.Cosine(testImageFeatures[imagenames[i]], testImageFeatures[imagenames[j]]);
+            //        Console.Out.WriteLine(imagenames[i] + " <-> " + imagenames[j] + " distance: " + dist.ToString());
+            //    }
+            //}
+        //}
 
 
         /// <summary>
@@ -472,6 +450,9 @@ namespace Image_Retrieval_Application
             Console.WriteLine("### Grabbing IMG and XML-Files ###\n");
             List<String> imgSubDirectories = getSubDirectories(imgDirectory);
             List<String> xmlFiles = genXmlFilepaths(imgSubDirectories);
+            List<String> csvFiles = genCSVFilepaths(imgSubDirectories);
+           
+           
 
             while (xmlFiles.Count == 0)
             {
@@ -489,31 +470,30 @@ namespace Image_Retrieval_Application
                     Console.WriteLine("\nTrying to fetch Data with new paths...");
                     imgSubDirectories = getSubDirectories(newImgPath);
                     xmlFiles = genXmlFilepaths(imgSubDirectories);
+                    csvFiles = genCSVFilepaths(imgSubDirectories);
                 }
 
             }
             Console.WriteLine("### Parsing XML-File(s) ###\n");
 
             Console.WriteLine("### Creating Index (this can take a while) ####");
-            foreach (string file in xmlFiles)
-            {
-                dynamic elements = parseXML(file);
-                foreach (var photo in elements.photo)
-                {
-                    addItemToIndex(photo);
-                }
-            }
+            //foreach (string file in xmlFiles)
+            //{
+            //    dynamic elements = parseXML(file);
+            //    foreach (var photo in elements.photo)
+            //    {
+            //        addItemToIndex(photo);
+            //    }
+            //}
+
+            saveFeaturesFromCSV(csvFiles);
+
+            
+
             Console.WriteLine("\n\n### Index creation successful! ###\n\n");
             Console.WriteLine("Press Enter to continue:");
             Console.ReadLine();
             //printIndex();
-
-
-            //COMPUTE FEATURES & DISTANCE
-            Index();
-            Query();
-            ImageFeatures();
-
             
             Application.Run(new frm_main());
 
