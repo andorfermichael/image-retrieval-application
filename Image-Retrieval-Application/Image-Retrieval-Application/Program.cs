@@ -1,38 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-
-using System.Collections;
-using System.Xml.Serialization;
-using System.Xml;
-//using System.IO.Stream;
-
-using System.Data.Entity.Design.PluralizationServices;
-using System.Globalization;
 using System.Text.RegularExpressions;
-using System.Reflection;
 using System.Diagnostics;
 using System.Windows.Forms;
-
-using Lucene.Net.Documents;
-using Lucene.Net.Analysis.Standard;
-using Lucene.Net.Index;
-using Lucene.Net.Search;
-
-using FSDirectory = Lucene.Net.Store.FSDirectory;
-using Version = Lucene.Net.Util.Version;
-
-using Accord;
-using Accord.Imaging;
-using Accord.MachineLearning;
 using Accord.Math;
-using Accord.Statistics.Kernels;
-using AForge;
-//using Accord.Math.Distances;
 
 namespace Image_Retrieval_Application
 {
@@ -44,7 +19,6 @@ namespace Image_Retrieval_Application
             { 
                return Directory.GetDirectories(path, searchPattern).ToList();
             }
-
 
             var directories = new List<string>(GetDirectories(path, searchPattern));
 
@@ -151,25 +125,12 @@ namespace Image_Retrieval_Application
         public static Dictionary<string, Dictionary<string, decimal[]>> picFeatures = new Dictionary<string, Dictionary<string, decimal[]>>();
 
         //GLOBAL VARIABLES
-
-        // TODO: In production replace switch from solutionDirectory to applicationDirectory
-        //string applicationDirectory = Path.GetDirectoryName("../../" + Application.ExecutablePath);
         static string solutionDirectory = Path.GetDirectoryName(Path.GetDirectoryName(Directory.GetCurrentDirectory()));
 
         public static List<string> startTagSearch(string searchValue) {
             Debug.WriteLine("Search Value: " + searchValue.ToLower());
             return getImgPathsForWordSearch(searchFor(searchValue.ToLower()));
         }
-
-        //public static List<string> startSimilaritySearch(Dictionary<string, double> DistancesCollection)
-        //{
-        //    List<string> resultDistancesPath;
-
-        //    resultDistancesPath = getImgPathsForImageSearch(DistancesCollection);   
-            
-        //    return resultDistancesPath;
-        //}
-
 
         public static void startQueryByExampleSearch(string imageLocation)
         {
@@ -179,8 +140,6 @@ namespace Image_Retrieval_Application
 
         public static List<string> retrieveSimilarImages(long imageID, string selectionMethod)
         {
-            // TODO: Replace with real function
-            Debug.WriteLine("Similar Images for ID " + imageID + " with retrieval function " + selectionMethod);
             return getImgPathsForImageSearch(computeDistance(Convert.ToString(imageID), selectionMethod));
         }
 
@@ -196,8 +155,6 @@ namespace Image_Retrieval_Application
             List<String> xmlFilepaths = new List<string>();
             foreach (string item in imgSubDirectories)
             {
-                // WARNING, this is only valid if Folders are named "img" and "xml" (Length of 3 characters)
-                //string tmp = item.Substring(item.IndexOf("img/"));
                 xmlFilepaths.Add(item.Replace(@"\img\", @"\xml\") + ".xml");
             }
             return xmlFilepaths;
@@ -208,8 +165,6 @@ namespace Image_Retrieval_Application
             List<String> csvFilepaths = new List<string>();
             foreach (string item in imgSubDirectories)
             {
-                // WARNING, this is only valid if Folders are named "img" and "xml" (Length of 3 characters)
-                //string tmp = item.Substring(item.IndexOf("img/"));
                 csvFilepaths.Add(item.Replace(@"\img\", @"\descvis\descvis\img\") + " " + pattern + ".csv");
             }
             return csvFilepaths;
@@ -234,7 +189,6 @@ namespace Image_Retrieval_Application
                             for (int j = 1; j < values.Length; j++)
                             {
                                 featuresPerLine[j - 1] = Decimal.Parse(values[j].Replace(".", ","), System.Globalization.NumberStyles.Float);
-                                //Console.WriteLine((featuresPerLine[j-1]));
                             }
                             try
                             {
@@ -254,7 +208,6 @@ namespace Image_Retrieval_Application
 
         private static void addItemToIndex(dynamic Item)
         {
-            //  { "date_taken", "description", "tags", "title", "username" }
             foreach (string word in splitIntoWords(Item.date_taken))
                 addWordToIndex(Item.id, word.ToLower(), weightOfPorperties["date_taken"]);
             foreach (string word in splitIntoWords(Item.description))
@@ -278,18 +231,15 @@ namespace Image_Retrieval_Application
 
         public static void addWordToIndex(string ItemID, string Property, int Weight)
         {
-            //{ "date_taken", "description", "tags", "title", "username" };
             if (!(stopWords.Contains(Property)) && (Property.Length >= 3))
             {   //check if it is a stopWord, if not, add it to searchIndex
                 if (!(searchIndex.ContainsKey(Property)))
                 {   //check if Key exists already in Dictionary - if not:
                     searchIndex.Add(Property, new Dictionary<string, int> { { ItemID, Weight } });
-                    //Console.WriteLine("# Adding Key '{0}' with Item '{1}'#\n", word, Item.id);
                     Console.Write(".");
                 }
                 else
                 {   //key exists already
-                    //Console.WriteLine("## Key '{0}' already exists, adding Item '{1}' to set#\n", word, Item.id);
                     if (!(searchIndex[Property].ContainsKey(ItemID)))
                     {    //check if Item has already been added to indexed word/property - if not add it with current score
                         searchIndex[Property].Add(ItemID, Weight);
@@ -297,7 +247,6 @@ namespace Image_Retrieval_Application
                     else
                     {
                         //item is already in list of indexed word/property, add scorepoints
-                        //Console.WriteLine("Current Score of word " + Property + ": " + searchIndex[Property][Item]);
                         searchIndex[Property][ItemID] += Weight;
                     }
                     Console.Write(".");
@@ -324,10 +273,7 @@ namespace Image_Retrieval_Application
                 {
 
                     fileIndex.Add(item.id, directory + item.id + ".jpg");
-                    //Console.WriteLine(directory + item.id + ".jpg");
                     string picPath = (string)directory + item.id + ".jpg";
-                    //Console.WriteLine(picPath);
-
                 }
                 catch (ArgumentException)
                 {
@@ -483,8 +429,6 @@ namespace Image_Retrieval_Application
             foreach (var item in picFeatures[selectionMethod])
             {
                 double dist = Distance.Cosine(Array.ConvertAll(searchedImageFeatures, x => (double)x), Array.ConvertAll(item.Value, x => (double)x));
-                //Console.WriteLine(dist.ToString());
-                //Console.WriteLine(item.Key);
                 resultDistances.Add(item.Key, dist);
             }
 
@@ -518,7 +462,6 @@ namespace Image_Retrieval_Application
                 {
                     Console.WriteLine("Project Directory does not contain an neccessary 'devset' directory/seems to be empty or cannot be found/accessed: '{0}'\n\nEnter new absolute Path to Project-Directory:\n(Project Directory must contain at least 'devset' with following Directories: 'xml' - XML-Metadatas,'img' - Images and 'descvis' - Featurepoints)\t", projectPath);
                     string newProjectPath = Console.ReadLine();
-                    //xmlDirectory = newXmlPath;    //not neccessary
                     Console.WriteLine("- Project-Path set to '{0}'", newProjectPath);
                     string newImgPath = Console.ReadLine();
                     Console.WriteLine("\nTrying to fetch Data with new paths...");
@@ -566,8 +509,6 @@ namespace Image_Retrieval_Application
             picFeatures.Add("CSD", saveFeaturesFromCSV(csvFilesCSD));
             generateFeaturePointsXML(picFeatures["CSD"]).Save(computedTargetPath + @"\featuresCSD.xml");
 
-
-
             picFeatures.Add("LBP", saveFeaturesFromCSV(csvFilesLBP));
             generateFeaturePointsXML(picFeatures["LBP"]).Save(computedTargetPath + @"\featuresLBP.xml");
 
@@ -575,8 +516,6 @@ namespace Image_Retrieval_Application
             picFeatures.Add("HOG", saveFeaturesFromCSV(csvFilesHOG));
             generateFeaturePointsXML(picFeatures["HOG"]).Save(computedTargetPath + @"\featuresHOG.xml");
 
-
-            //OLD: generateFeaturePointsXML(picFeatures).Save(computedTargetPath + @"\features.xml");
             Console.WriteLine("\n\n### Saved Featurepoints to {0} ###\n\n", computedTargetPath);
         }
 
@@ -606,7 +545,6 @@ namespace Image_Retrieval_Application
                 {
                     Console.WriteLine("### Testset not found at '{0}'! Please enter absolute path to testset! ####", projectPath);
                     string testsetPath = Console.ReadLine();
-                    //xmlDirectory = newXmlPath;    //not neccessary
                     Console.WriteLine("- Testset-Path set to '{0}'", testsetPath);
                     Console.WriteLine("\nTrying to fetch Data from " + testsetPath);
                     if (!testsetPath.EndsWith(@"\"))
@@ -774,7 +712,6 @@ namespace Image_Retrieval_Application
             {
                 Console.WriteLine("Project Directory does not contain an neccessary directory/seems to be empty or cannot be found/accessed: '{0}'\n\nEnter new absolute Path to Project-Directory:\n(Project Directory must contain following Directories: 'xml' - XML-Metadatas,'img' - Images and 'descvis' - Featurepoints)\t", projectPath);
                 string newProjectPath = Console.ReadLine();
-                //xmlDirectory = newXmlPath;    //not neccessary
                 Console.WriteLine("- Project-Path set to '{0}'", newProjectPath);
                 projectPath = newProjectPath;
             }
@@ -817,7 +754,6 @@ namespace Image_Retrieval_Application
                 }
                 else
                 {
-                    //<string, Dictionary<string, int>>
                     loadPrecomputedSearchIndex();
                     loadPrecomputedFileIndex();
                     loadAllPrecomputedFeatures();
@@ -838,20 +774,8 @@ namespace Image_Retrieval_Application
                 }
             }
 
-            //Dictionary<string, double> resultDistances = computeDistance("REAL ID HERE", picFeatures);
-
-            ////startSimilaritySearch(resultDistances);
-
-            //List<string> test = getImgPathsForImageSearch(resultDistances);
-
-            //for (int i = 0; i < test.Count; i++)
-            //{
-            //    Console.WriteLine(test[i]);
-            //}
-
             Console.WriteLine("Press Enter to continue:");
             Console.ReadLine();
-            //printIndex();
             
             Application.Run(new frm_main());
 

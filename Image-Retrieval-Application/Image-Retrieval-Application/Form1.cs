@@ -9,11 +9,8 @@ namespace Image_Retrieval_Application
 {
     public partial class frm_main : Form
     {
-        // TODO: In production replace switch from solutionDirectory to applicationDirectory
-        //string applicationDirectory = Path.GetDirectoryName("../../" + Application.ExecutablePath);
         static string solutionDirectory = Path.GetDirectoryName(Path.GetDirectoryName(Directory.GetCurrentDirectory()));
         static string indexUri = "file:///" + solutionDirectory + @"\web\index.html";
-        static string uploadDirectory = solutionDirectory + @"\user\image-upload\";
         static int resultsPerPage = 8;
         static List<string> cachedResults = new List<string>();
 
@@ -68,6 +65,7 @@ namespace Image_Retrieval_Application
             HtmlElement modalBody = webbrowser.Document.GetElementById("modal-body");
             modalBody.InnerHtml = "";
 
+            // Retrieve image id and selection method
             long imageID = Convert.ToInt64(Path.GetFileName(elem.GetAttribute("src")).Replace(".jpg", ""));
             string selectedOption = "";
 
