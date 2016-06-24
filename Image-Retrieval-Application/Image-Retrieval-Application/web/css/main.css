@@ -1,0 +1,58 @@
+
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+.jumbotron {
+	padding-left: 60px;
+	padding-right: 60px;
+}
+
+img:hover {
+	cursor: pointer;
+}   
+   
+.navbar-center {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
+  text-align: center;
+  margin: auto;
+  height: 100%;
+  box-sizing: border-box;
+  padding-top: 8px;
+}
+
+.modal-title {
+	text-align: center;
+}
+
+#modal-body {
+	margin: auto;
+	text-align: center;
+}
+
+#modal-body img {
+	margin-bottom: 20px;
+}
+
+#modal-body img:first-child {
+	border: 10px red solid;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
