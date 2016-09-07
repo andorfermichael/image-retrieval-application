@@ -7,9 +7,12 @@ Retrieve images by text and similarity.
 - open "Image-Retriebal-Application.sln" with Visual Studio
 - run application
 
-## Author
+## Authors
 
-[Michael Andorfer](mailto:mandorfer.mmt-b2014@fh-salzburg.ac.at)
+- [Michael Andorfer](mailto:mandorfer.mmt-b2014@fh-salzburg.ac.at)
+- [Nicola Deufemia](mailto:ndeufemia.mmt-b2014@fh-salzburg.ac.at)
+- [Stefanie Habersatter](mailto:shabersatter.mmt-b2014@fh-salzburg.ac.at)
+- [Vera Karl](mailto:vkarl.mmt-b2014@fh-salzburg.ac.at)
 
 ## License
 
